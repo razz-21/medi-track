@@ -1,11 +1,8 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "installCommand": "npm install",
-  "framework": "sveltekit",
-  "builds": [
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/node"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
-} 
+}
