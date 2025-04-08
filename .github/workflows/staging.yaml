@@ -1,4 +1,4 @@
-name: Vercel Development Deployment
+name: Vercel Staging Deployment
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -7,7 +7,7 @@ env:
 on:
   push:
     branches:
-      - development
+      - staging
 
 jobs:
   deploy:
@@ -25,9 +25,9 @@ jobs:
         run: npm install -g vercel
 
       - name: Pull Vercel Information
-        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=staging --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Buile Artifacts
+      - name: Build Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
