@@ -1,6 +1,9 @@
 test-results
 node_modules
 
+# Bun
+bun.lock
+
 # Output
 .output
 .vercel
