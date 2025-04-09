@@ -12,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,7 +31,7 @@ jobs:
       - name: Pull Vercel Information
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Buile Artifacts
+      - name: Build Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
