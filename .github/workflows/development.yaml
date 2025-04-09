@@ -10,7 +10,7 @@ on:
       - development
 
 jobs:
-  deploy:
+  deploy-to-development:
     runs-on: ubuntu-latest
     environment: Development
     steps:

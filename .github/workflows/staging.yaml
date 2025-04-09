@@ -10,7 +10,7 @@ on:
       - staging
 
 jobs:
-  deploy:
+  deploy-to-staging:
     runs-on: ubuntu-latest
     environment: Staging
     steps:
