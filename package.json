@@ -57,6 +57,6 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.487.0",
-		"svelte-chartjs": "^3.1.5"
+		"chart.js": "^4.4.8"
 	}
 }
