@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Toaster } from "$lib/components/ui/sonner";
-
+	import { Toaster } from '$lib/components/ui/sonner';
 	import '../app.css';
 
 	let { children } = $props();
@@ -9,3 +8,7 @@
 {@render children()}
 
 <Toaster />
+
+<svelte:head>
+	<title>Meditrack</title>
+</svelte:head>

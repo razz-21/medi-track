@@ -1,3 +1,3 @@
-import db from "../mongo";
+import db from '../mongo';
 
-export default db.collection("test");
+export default db.collection('test');
