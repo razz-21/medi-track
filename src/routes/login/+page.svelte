@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import Input from "$lib/components/ui/input/input.svelte";
 
   function handleLogin() {
-    console.log("Login");
+    goto('/app');
   }
 </script>
 
