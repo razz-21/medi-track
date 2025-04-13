@@ -9,3 +9,7 @@
 {@render children()}
 
 <Toaster />
+
+<svelte:head>
+	<title>Meditrack</title>
+</svelte:head>

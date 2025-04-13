@@ -6,7 +6,6 @@
   export let data: PageData;
 </script>
 
-
 <div class="h-[100vh] flex items-center justify-center">
   <div class="flex flex-col gap-4 items-center">
     <h1 class="text-2xl font-bold">Welcome to Meditrack</h1>
