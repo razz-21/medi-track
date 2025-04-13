@@ -58,11 +58,11 @@
 	</div>
 </div>
 
-<style>
+<style lang="postcss">
 	@reference 'tailwindcss';
 
 	.sidebar-container {
-		@apply flex flex-col h-full p-4;
+		@apply flex flex-col h-full p-4 fixed top-0 left-0 w-[240px];
 	}
 
 	.sidebar-user {
@@ -82,7 +82,7 @@
 	}
 
 	.sidebar-navigation-item.active {
-		@apply bg-green-500 text-white;
+		@apply bg-green-100;
 	}
 
 	.sidebar-footer {

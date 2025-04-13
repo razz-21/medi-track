@@ -1,10 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import 'tailwindcss';
+
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
 @config "../tailwind.config.js";
 
+@theme {
+	--font-display: 'Open Sans', sans-serif;
+}
+
 @layer base {
+	html {
+		font-family: var(--font-display);
+	}
+
 	:root {
 		--background: 0 0% 100%;
 		--foreground: 222.2 84% 4.9%;
@@ -27,8 +37,8 @@
 		--secondary: 306 58% 36%;
 		--secondary-foreground: 210 40% 98%;
 
-		--accent: 103 57% 36%;
-		--accent-foreground: 210 40% 98%;
+		--accent: 210 20% 98%;
+		--accent-foreground: 229 84% 5%;
 
 		--destructive: 0 72.2% 50.6%;
 		--destructive-foreground: 210 40% 98%;
