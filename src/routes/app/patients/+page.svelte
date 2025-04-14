@@ -34,7 +34,7 @@
 	<div class="mt-4">
 		<div class="flex flex-col gap-2">
 			<Input
-				class="max-w-sm bg-white text-xs"
+				class="max-w-sm bg-white"
 				placeholder="Search patient name"
 				type="text"
 				bind:value={searchQuery}

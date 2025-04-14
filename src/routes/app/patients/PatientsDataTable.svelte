@@ -7,12 +7,9 @@
 		TableCell,
 		TableBody
 	} from '$lib/components/ui/table/index.js';
-	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { readable } from 'svelte/store';
 	import PatientsDataTableActions from './PatientsDataTableActions.svelte';
 	import PatientStatusPill from './PatientStatusPill.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { addPagination } from 'svelte-headless-table/plugins';
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 
 	type Patient = {
@@ -26,6 +23,11 @@
 </script>
 
 <script lang="ts">
+	let pageIndex = $state(1);
+	let pageCount = $state(10);
+	let hasPreviousPage = $state(true);
+	let hasNextPage = $state(true);
+
 	const patients: Patient[] = [
 		{
 			id: '1',
@@ -45,97 +47,45 @@
 		}
 	];
 
-	const table = createTable(readable(patients), {
-		page: addPagination()
-	});
-
-	const columns = table.createColumns([
-		table.column({
-			header: 'Name',
-			accessor: 'name'
-		}),
-		table.column({
-			header: 'Gender',
-			accessor: 'gender'
-		}),
-		table.column({
-			header: 'Date of birth',
-			accessor: 'dateOfBirth',
-			cell: ({ value }) => {
-				return new Date(value).toLocaleDateString('en-US', {
-					month: 'long',
-					day: 'numeric',
-					year: 'numeric'
-				});
-			}
-		}),
-		table.column({
-			accessor: 'status',
-			header: 'Status',
-			cell: ({ value }) => {
-				return createRender(PatientStatusPill, { status: value });
-			}
-		}),
-		table.column({
-			header: 'Created at',
-			accessor: 'createdAt',
-			cell: ({ value }) => {
-				return new Date(value).toLocaleDateString('en-US', {
-					month: 'long',
-					day: 'numeric',
-					year: 'numeric'
-				});
-			}
-		}),
-		table.column({
-			accessor: ({ id }) => id,
-			header: '',
-			cell: ({ value }) => {
-				return createRender(PatientsDataTableActions, {
-					id: value,
-					viewPatient: () => {},
-					deletePatient: () => {}
-				});
-			}
-		})
-	]);
-
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
-		table.createViewModel(columns);
-
-	const { hasNextPage, hasPreviousPage, pageIndex, pageCount } = pluginStates.page;
+	function formateDate(date: string) {
+		return new Date(date).toLocaleDateString('en-US', {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric'
+		});
+	}
 </script>
 
 <div class="rounded-md border">
-	<Table {...$tableAttrs} class="bg-white rounded-md">
+	<Table>
 		<TableHeader>
-			{#each $headerRows as headerRow}
-				<Subscribe rowAttrs={headerRow.attrs()}>
-					<TableRow>
-						{#each headerRow.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()}>
-								<TableHead {...attrs} class="font-medium text-xs text-gray-500">
-									<Render of={cell.render()} />
-								</TableHead>
-							</Subscribe>
-						{/each}
-					</TableRow>
-				</Subscribe>
-			{/each}
+			<TableRow>
+				<TableHead class="font-medium text-xs text-gray-500">Name</TableHead>
+				<TableHead class="font-medium text-xs text-gray-500">Gender</TableHead>
+				<TableHead class="font-medium text-xs text-gray-500">Date of birth</TableHead>
+				<TableHead class="font-medium text-xs text-gray-500">Status</TableHead>
+				<TableHead class="font-medium text-xs text-gray-500">Created at</TableHead>
+				<TableHead class="font-medium text-xs text-gray-500 w-[3rem]"></TableHead>
+			</TableRow>
 		</TableHeader>
-		<TableBody {...$tableBodyAttrs}>
-			{#each $pageRows as row (row.id)}
-				<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-					<TableRow {...rowAttrs}>
-						{#each row.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()}>
-								<TableCell {...attrs}>
-									<Render of={cell.render()} />
-								</TableCell>
-							</Subscribe>
-						{/each}
-					</TableRow>
-				</Subscribe>
+		<TableBody>
+			{#each patients as patient}
+				<TableRow>
+					<TableCell>{patient.name}</TableCell>
+					<TableCell>{patient.gender}</TableCell>
+					<TableCell>{formateDate(patient.dateOfBirth)}</TableCell>
+					<TableCell>
+						<PatientStatusPill status={patient.status} />
+					</TableCell>
+					<TableCell>{formateDate(patient.createdAt)}</TableCell>
+					<TableCell>
+						<PatientsDataTableActions
+							id={patient.id}
+							viewPatient={() => {}}
+							deletePatient={() => {}}
+						/>
+					</TableCell>
+				</TableRow>
 			{/each}
 		</TableBody>
 	</Table>
@@ -144,23 +94,23 @@
 <div class="flex justify-between gap-4">
 	<div class="ml-2">
 		<p class="text-xs font-bold">
-			Page {$pageIndex + 1} of {$pageCount}
+			Page {pageIndex + 1} of {pageCount}
 		</p>
 	</div>
 	<div class="flex items-center justify-end space-x-2 py-2">
 		<Button
 			variant="outline"
 			size="sm"
-			on:click={() => ($pageIndex = $pageIndex - 1)}
-			disabled={!$hasPreviousPage}
+			on:click={() => (pageIndex = pageIndex - 1)}
+			disabled={!hasPreviousPage}
 		>
 			<ChevronLeft class="w-3 h-3" />
 		</Button>
 		<Button
 			variant="outline"
 			size="sm"
-			disabled={!$hasNextPage}
-			on:click={() => ($pageIndex = $pageIndex + 1)}
+			disabled={!hasNextPage}
+			on:click={() => (pageIndex = pageIndex + 1)}
 		>
 			<ChevronRight class="w-3 h-3" />
 		</Button>
