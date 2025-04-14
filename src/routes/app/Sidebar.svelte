@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { User, Users, LogOut, ChartArea, UserRoundPlus, ClipboardMinus } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
+	import { Routes } from '$lib/models/navigation/routes';
+	import { page } from '$app/stores';
+
+	let activeRoute = $derived($page.url.pathname);
+
+	function navigate(path: string) {
+		goto(path);
+	}
 
 	function handleLogout() {
 		goto('/login');
@@ -16,12 +24,26 @@
 	</div>
 
 	<div class="sidebar-navigation">
-		<div class="sidebar-navigation-item active">
+		<div
+			role="button"
+			tabindex="0"
+			class="sidebar-navigation-item"
+			class:active={activeRoute === Routes.Dashboard}
+			on:click={() => navigate(Routes.Dashboard)}
+			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Dashboard)}
+		>
 			<ChartArea class="w-4 h-4" />
 			<span>Dashboard</span>
 		</div>
 
-		<div class="sidebar-navigation-item">
+		<div
+			role="button"
+			tabindex="0"
+			class="sidebar-navigation-item"
+			class:active={activeRoute === Routes.Patients}
+			on:click={() => navigate(Routes.Patients)}
+			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Patients)}
+		>
 			<UserRoundPlus class="w-4 h-4" />
 			<span>Patients</span>
 		</div>
@@ -78,7 +100,7 @@
 	}
 
 	.sidebar-navigation-item {
-		@apply flex items-center gap-2 p-2 mx-[-4px] text-sm hover:bg-gray-100 rounded-md cursor-pointer;
+		@apply flex items-center gap-2 p-2 mx-[-4px] text-xs hover:bg-gray-100 rounded-md cursor-pointer;
 	}
 
 	.sidebar-navigation-item.active {

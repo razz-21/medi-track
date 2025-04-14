@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+/* @import url('https://fonts.cdnfonts.com/css/sf-pro-display'); */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
 @plugin '@tailwindcss/forms';
@@ -7,12 +8,14 @@
 @config "../tailwind.config.js";
 
 @theme {
-	--font-display: 'Open Sans', sans-serif;
+	--font-display: 'SF Pro Display', sans-serif;
 }
 
 @layer base {
 	html {
-		font-family: var(--font-display);
+		font-family: 'Inter', sans-serif;
+		font-optical-sizing: auto;
+		font-style: normal;
 	}
 
 	:root {
@@ -37,7 +40,7 @@
 		--secondary: 306 58% 36%;
 		--secondary-foreground: 210 40% 98%;
 
-		--accent: 210 20% 98%;
+		--accent: 214 32% 91%;
 		--accent-foreground: 229 84% 5%;
 
 		--destructive: 0 72.2% 50.6%;
@@ -87,4 +90,12 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+button {
+	@apply cursor-pointer;
+}
+
+button:disabled {
+	@apply cursor-not-allowed;
 }

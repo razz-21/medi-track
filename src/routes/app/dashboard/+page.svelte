@@ -15,7 +15,6 @@
 		CalendarDate,
 		DateFormatter,
 		getLocalTimeZone,
-		ZonedDateTime,
 		type DateValue
 	} from '@internationalized/date';
 	import { cn } from '$lib/utils';
@@ -33,14 +32,16 @@
 		new Date().getMonth() + 1,
 		new Date().getDate()
 	);
+
+	let datePeriod = df.format(new Date());
 </script>
 
 <div>
 	<div class="flex items-center justify-between mb-6">
-		<h2 class="text-xl font-bold">Dashboard</h2>
+		<h2 class="text-2xl font-bold">Dashboard</h2>
 		<div class="text-xs text-gray-500 bg-gray-100 p-2 rounded-2xl flex items-center gap-2">
 			<CalendarIcon class="w-4 h-4" />
-			<span>Date period: April 2, 2025</span>
+			<span>Date period: {datePeriod}</span>
 		</div>
 	</div>
 

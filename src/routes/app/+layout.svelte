@@ -4,7 +4,7 @@
 	let { children } = $props();
 </script>
 
-<div class="flex bg-gray-50">
+<div class="flex bg-slate-50">
 	<Sidebar />
 	<div class="main-container">
 		{@render children()}
@@ -15,8 +15,9 @@
 	@reference 'tailwindcss';
 
 	.main-container {
-		@apply bg-white w-full m-2 p-4 rounded-lg border-gray-200 border min-h-screen;
+		@apply bg-white w-full m-2 p-4 rounded-lg border-gray-200 border;
 
 		margin-left: 240px;
+		min-height: calc(100vh - 1rem);
 	}
 </style>

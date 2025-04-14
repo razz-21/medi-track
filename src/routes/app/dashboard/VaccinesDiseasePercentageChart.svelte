@@ -58,13 +58,13 @@
 	<h3 class="text-sm font-bold">Vaccines/Diseases percentage</h3>
 	<div class="flex items-center justify-between">
 		<div class="flex flex-col gap-2">
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
 				<span>Vaccinated - <strong>33%</strong></span>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-green-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-green-500 rounded-full"></div>
 				<span>Diseased - <strong>67%</strong></span>
 			</div>
 		</div>

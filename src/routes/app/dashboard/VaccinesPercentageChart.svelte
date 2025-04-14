@@ -64,28 +64,28 @@
 	<h3 class="text-sm font-bold">Vaccines percentage</h3>
 	<div class="flex items-center justify-between">
 		<div class="flex flex-col gap-2">
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-green-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-green-500 rounded-full"></div>
 				<span>Flu - <strong>5%</strong></span>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-purple-500 rounded-full"></div>
 				<span>Measles - <strong>19%</strong></span>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
 				<span>Polio - <strong>3%</strong></span>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-red-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-red-500 rounded-full"></div>
 				<span>Rabbies - <strong>2%</strong></span>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+			<div class="flex items-center gap-2 text-xs">
+				<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
 				<span>Covid - <strong>12%</strong></span>
 			</div>
 		</div>
