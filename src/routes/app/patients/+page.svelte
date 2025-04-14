@@ -12,7 +12,7 @@
 	<div class="flex items-center justify-between mt-4 mb-6">
 		<div>
 			<h2 class="text-2xl font-bold">Patients</h2>
-			<p class="text-sm text-gray-400">List of all patients records</p>
+			<p class="text-xs text-gray-400">List of all patients records</p>
 		</div>
 
 		<div class="flex items-center gap-2">

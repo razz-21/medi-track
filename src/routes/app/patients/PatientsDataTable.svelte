@@ -11,6 +11,8 @@
 	import PatientStatusPill from './PatientStatusPill.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { Routes } from '$lib/models/navigation/routes';
 
 	type Patient = {
 		id: string;
@@ -71,7 +73,21 @@
 		<TableBody>
 			{#each patients as patient}
 				<TableRow>
-					<TableCell>{patient.name}</TableCell>
+					<TableCell>
+						<div
+							role="button"
+							tabindex="0"
+							class="hover:underline hover:underline-offset-4 hover:decoration hover:decoration-green-700 hover:underline-2 cursor-pointer"
+							onclick={() => goto(`${Routes.Patients}/${patient.id}`)}
+							onkeydown={(e) => {
+								if (e.key === 'Enter') {
+									goto(`${Routes.Patients}/${patient.id}`);
+								}
+							}}
+						>
+							{patient.name}
+						</div>
+					</TableCell>
 					<TableCell>{patient.gender}</TableCell>
 					<TableCell>{formateDate(patient.dateOfBirth)}</TableCell>
 					<TableCell>
@@ -81,7 +97,9 @@
 					<TableCell>
 						<PatientsDataTableActions
 							id={patient.id}
-							viewPatient={() => {}}
+							viewPatient={() => {
+								goto(`${Routes.Patients}/${patient.id}`);
+							}}
 							deletePatient={() => {}}
 						/>
 					</TableCell>

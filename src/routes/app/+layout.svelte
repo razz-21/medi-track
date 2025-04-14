@@ -15,7 +15,7 @@
 	@reference 'tailwindcss';
 
 	.main-container {
-		@apply bg-white w-full m-2 p-4 rounded-lg border-gray-200 border;
+		@apply bg-white w-full m-2 p-6 rounded-lg border-gray-200 border;
 
 		margin-left: 240px;
 		min-height: calc(100vh - 1rem);
