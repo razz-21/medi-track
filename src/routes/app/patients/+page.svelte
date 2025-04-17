@@ -4,8 +4,14 @@
 	import Card from './Card.svelte';
 	import PatientsDataTable from './PatientsDataTable.svelte';
 	import { Input } from '$lib/components/ui/input';
+	import { goto } from '$app/navigation';
+	import { Routes } from '$lib/models/navigation/routes';
 
 	let searchQuery = $state('');
+
+	function handleCreatePatient() {
+		goto(Routes.PatientsCreate);
+	}
 </script>
 
 <div class="max-w-[1440px]">
@@ -16,7 +22,7 @@
 		</div>
 
 		<div class="flex items-center gap-2">
-			<Button size="sm">
+			<Button size="sm" on:click={handleCreatePatient}>
 				<Plus class="w-4 h-4" />
 				Add Patient
 			</Button>

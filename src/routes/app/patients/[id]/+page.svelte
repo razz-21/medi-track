@@ -14,11 +14,20 @@
 		SheetTitle,
 		SheetTrigger
 	} from '$lib/components/ui/sheet';
-	import SheetFooter from '$lib/components/ui/sheet/sheet-footer.svelte';
-	import PatientForm from '../PatientForm.svelte';
+	import PatientForm from '../create/PatientForm.svelte';
+
+	let sheetPatientFormOpen = $state(false);
 
 	function handleBack() {
 		goto(Routes.Patients);
+	}
+
+	function handlePatientFormSubmit() {
+		console.log('submit');
+	}
+
+	function handlePatientFormBack() {
+		sheetPatientFormOpen = false;
 	}
 </script>
 
@@ -29,7 +38,7 @@
 		</div>
 
 		<div class="flex items-center gap-2">
-			<Sheet>
+			<Sheet bind:open={sheetPatientFormOpen}>
 				<SheetTrigger asChild let:builder>
 					<Button size="sm" variant="outline" builders={[builder]}>
 						<div class="flex items-center gap-1">
@@ -38,7 +47,7 @@
 						</div>
 					</Button>
 				</SheetTrigger>
-				<SheetContent side="right">
+				<SheetContent side="right" class="w-[1000px] sm:max-w-full">
 					<SheetHeader>
 						<SheetTitle>Edit patient details</SheetTitle>
 						<SheetDescription class="text-xs">
@@ -47,7 +56,7 @@
 					</SheetHeader>
 
 					<div class="flex flex-col gap-4 mt-6">
-						<PatientForm />
+						<PatientForm back={handlePatientFormBack} submit={handlePatientFormSubmit} />
 					</div>
 				</SheetContent>
 			</Sheet>
