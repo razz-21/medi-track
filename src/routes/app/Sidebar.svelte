@@ -28,7 +28,7 @@
 			role="button"
 			tabindex="0"
 			class="sidebar-navigation-item"
-			class:active={activeRoute === Routes.Dashboard}
+			class:active={activeRoute.includes(Routes.Dashboard)}
 			on:click={() => navigate(Routes.Dashboard)}
 			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Dashboard)}
 		>
@@ -40,7 +40,7 @@
 			role="button"
 			tabindex="0"
 			class="sidebar-navigation-item"
-			class:active={activeRoute === Routes.Patients}
+			class:active={activeRoute.includes(Routes.Patients)}
 			on:click={() => navigate(Routes.Patients)}
 			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Patients)}
 		>
@@ -100,7 +100,7 @@
 	}
 
 	.sidebar-navigation-item {
-		@apply flex items-center gap-2 p-2 mx-[-4px] text-xs hover:bg-gray-100 rounded-md cursor-pointer;
+		@apply flex items-center gap-2 p-2 mx-[-4px] text-sm hover:bg-gray-100 rounded-md cursor-pointer;
 	}
 
 	.sidebar-navigation-item.active {

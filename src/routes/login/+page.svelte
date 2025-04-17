@@ -4,6 +4,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 
 	function handleLogin() {
+		console.log('login');
 		goto('/app');
 	}
 </script>
