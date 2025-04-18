@@ -12,10 +12,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Routes } from '$lib/models/navigation/routes';
 	import { Trash, UserRoundCheck, UserRoundX } from '@lucide/svelte';
-	import UserForm, {
-		UserFormMode,
-		type UserEditFormData,
-	} from '../create/UserForm.svelte';
+	import UserForm, { UserFormMode, type UserEditFormData } from '../create/UserForm.svelte';
 	import UserSideDetails from './UserSideDetails.svelte';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';

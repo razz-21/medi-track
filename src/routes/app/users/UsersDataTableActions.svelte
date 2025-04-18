@@ -10,13 +10,14 @@
 
 	type Props = {
 		id: string;
+		disabledDelete?: boolean;
 		viewUser: (id: string) => void;
 		deleteUser: (id: string) => void;
 	};
 </script>
 
 <script lang="ts">
-	const { id, viewUser, deleteUser }: Props = $props();
+	const { id, viewUser, deleteUser, disabledDelete = false }: Props = $props();
 </script>
 
 <div class="w-full flex justify-end">
@@ -32,9 +33,13 @@
 				<Eye class="w-4 h-4" />
 				<span class="ml-2">View</span>
 			</DropdownMenuItem>
-			<DropdownMenuItem on:click={() => deleteUser(id)} class="font-medium cursor-pointer">
-				<Trash class="w-4 h-4" />
-				<span class="ml-2">Delete</span>
+			<DropdownMenuItem
+				disabled={disabledDelete}
+				on:click={() => deleteUser(id)}
+				class="font-medium cursor-pointer"
+			>
+				<Trash class="w-4 h-4 text-rose-400" />
+				<span class="ml-2 text-rose-500">Delete</span>
 			</DropdownMenuItem>
 		</DropdownMenuContent>
 	</DropdownMenu>

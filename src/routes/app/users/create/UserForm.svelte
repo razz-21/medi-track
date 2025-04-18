@@ -42,7 +42,7 @@
 		username: z
 			.string({ required_error: 'Username is required' })
 			.nonempty({ message: 'Username is required' })
-			.min(6, { message: 'Username must be at least 4 characters' })
+			.min(4, { message: 'Username must be at least 4 characters' })
 			.max(32, { message: 'Username must be less than 16 characters' }),
 		role: z
 			.nativeEnum(UserTypeEnum, { required_error: 'Role is required' })

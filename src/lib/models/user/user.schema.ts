@@ -14,6 +14,20 @@ export const UserSchema = z.object({
 	updatedAt: z.string().optional()
 });
 
+export const UserGetTableUserParamsSchema = z.object({
+	page: z.number(),
+	limit: z.number(),
+	q: z.string().optional(),
+	type: z.nativeEnum(UserTypeEnum).optional()
+});
+
+export const UserGetTableSchema = z
+	.object({
+		count: z.number(),
+		users: z.array(UserSchema.omit({ password: true }))
+	})
+	.extend(UserGetTableUserParamsSchema.shape);
+
 export const UserGetSchema = UserSchema.omit({ password: true });
 
 export const UserPostSchema = UserSchema.omit({ createdAt: true, updatedAt: true, status: true });

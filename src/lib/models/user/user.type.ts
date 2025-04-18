@@ -1,7 +1,16 @@
-import type { UserSchema, UserPostSchema, UserGetSchema, UserPatchSchema } from './user.schema';
+import type {
+	UserSchema,
+	UserPostSchema,
+	UserGetSchema,
+	UserPatchSchema,
+	UserGetTableSchema,
+	UserGetTableUserParamsSchema
+} from './user.schema';
 import type { z } from 'zod';
 
 export type User = z.infer<typeof UserSchema>;
+export type UserGetTable = z.infer<typeof UserGetTableSchema>;
+export type UserGetTableUserParams = z.infer<typeof UserGetTableUserParamsSchema>;
 export type UserGet = z.infer<typeof UserGetSchema>;
 export type UserPost = z.infer<typeof UserPostSchema>;
 export type UserPatch = z.infer<typeof UserPatchSchema>;

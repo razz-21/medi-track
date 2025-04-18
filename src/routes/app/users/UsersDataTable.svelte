@@ -13,49 +13,45 @@
 	import { Routes } from '$lib/models/navigation/routes';
 	import UserStatusPill from './UserStatusPill.svelte';
 	import UsersDataTableActions from './UsersDataTableActions.svelte';
+	import { UserStatusEnum, type UserGetTable } from '$lib/models/user/user.type';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import {
+		AlertDialog,
+		AlertDialogContent,
+		AlertDialogDescription,
+		AlertDialogFooter,
+		AlertDialogTitle,
+		AlertDialogTrigger
+	} from '$lib/components/ui/alert-dialog';
+	import UserTypePill from './UserTypePill.svelte';
 
-	type User = {
-		id: string;
-		name: string;
-		role: string;
-		username: string;
-		status: string;
-		createdAt: string;
+	export type Props = {
+		loading: boolean;
+		users: UserGetTable['users'];
+		page: number;
+		limit: number;
+		total: number;
+		pageChange: (page: number) => void;
+		deleteUser: (user: UserGetTable['users'][0]) => void;
 	};
 </script>
 
 <script lang="ts">
-	let pageIndex = $state(1);
-	let pageCount = $state(10);
-	let hasPreviousPage = $state(true);
-	let hasNextPage = $state(true);
+	let {
+		loading = $bindable(false),
+		users = [],
+		page = $bindable(1),
+		limit = $bindable(10),
+		total = $bindable(0),
+		pageChange,
+		deleteUser
+	}: Props = $props();
 
-	const users: User[] = [
-		{
-			id: '1',
-			name: 'John Doe',
-			role: 'Admin',
-			username: 'john.doe',
-			status: 'active',
-			createdAt: '2021-01-01'
-		},
-		{
-			id: '2',
-			name: 'Jane Doe',
-			role: 'Encoder',
-			username: 'jane.doe',
-			status: 'inactive',
-			createdAt: '2021-01-01'
-		},
-		{
-			id: '3',
-			name: 'John Doe',
-			role: 'Admin',
-			username: 'john.doe',
-			status: 'deleted',
-			createdAt: '2021-01-01'
-		}
-	];
+	let pageCount = $derived(Math.ceil(total / limit));
+	let hasPreviousPage = $derived(page > 1);
+	let hasNextPage = $derived(page < pageCount);
+	let deleteUserDialogOpen = $state(false);
+	let activeUser = $state<UserGetTable['users'][0] | null>(null);
 
 	function formateDate(date: string) {
 		return new Date(date).toLocaleDateString('en-US', {
@@ -63,6 +59,26 @@
 			day: 'numeric',
 			year: 'numeric'
 		});
+	}
+
+	function handlePreviousPage() {
+		page = page - 1;
+		handlePageChange(page);
+	}
+
+	function handleNextPage() {
+		page = page + 1;
+		handlePageChange(page);
+	}
+
+	function handlePageChange(page: number) {
+		pageChange(page);
+	}
+
+	function handleDeleteUser() {
+		if (!activeUser) return;
+		deleteUser(activeUser);
+		deleteUserDialogOpen = false;
 	}
 </script>
 
@@ -79,66 +95,102 @@
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-			{#each users as user (user.id)}
+			{#if loading}
+				{#each Array(6) as _}
+					<TableRow>
+						{#each Array(6) as _}
+							<TableCell>
+								<Skeleton class="w-full h-6 rounded-md bg-slate-200" />
+							</TableCell>
+						{/each}
+					</TableRow>
+				{/each}
+			{:else if users.length > 0}
+				{#each users as user (user._id)}
+					<TableRow>
+						<TableCell>
+							<div
+								role="button"
+								tabindex="0"
+								class="hover:underline hover:underline-offset-4 hover:decoration hover:decoration-green-700 hover:underline-2 cursor-pointer"
+								onclick={() => goto(`${Routes.Users}/${user._id}`)}
+								onkeydown={(e) => {
+									if (e.key === 'Enter') {
+										goto(`${Routes.Users}/${user._id}`);
+									}
+								}}
+							>
+								{user.firstname}
+								{user.lastname}
+							</div>
+						</TableCell>
+						<TableCell>{user.username}</TableCell>
+						<TableCell>
+							<UserTypePill type={user.role} />
+						</TableCell>
+						<TableCell>
+							<UserStatusPill status={user.status} />
+						</TableCell>
+						<TableCell>{formateDate(user.createdAt || '')}</TableCell>
+						<TableCell>
+							<UsersDataTableActions
+								disabledDelete={user.status === UserStatusEnum.Deleted}
+								id={user._id}
+								viewUser={() => {
+									goto(`${Routes.Users}/${user._id}`);
+								}}
+								deleteUser={() => {
+									activeUser = user;
+									deleteUserDialogOpen = true;
+								}}
+							/>
+						</TableCell>
+					</TableRow>
+				{/each}
+			{:else}
 				<TableRow>
-					<TableCell>
-						<div
-							role="button"
-							tabindex="0"
-							class="hover:underline hover:underline-offset-4 hover:decoration hover:decoration-green-700 hover:underline-2 cursor-pointer"
-							onclick={() => goto(`${Routes.Users}/${user.id}`)}
-							onkeydown={(e) => {
-								if (e.key === 'Enter') {
-									goto(`${Routes.Users}/${user.id}`);
-								}
-							}}
-						>
-							{user.name}
-						</div>
-					</TableCell>
-					<TableCell>{user.username}</TableCell>
-					<TableCell>{user.role}</TableCell>
-					<TableCell>
-						<UserStatusPill status={user.status} />
-					</TableCell>
-					<TableCell>{formateDate(user.createdAt)}</TableCell>
-					<TableCell>
-						<UsersDataTableActions
-							id={user.id}
-							viewUser={() => {
-								goto(`${Routes.Users}/${user.id}`);
-							}}
-							deleteUser={() => {}}
-						/>
-					</TableCell>
+					<TableCell colspan={6} class="text-center text-xs text-gray-500 py-4 font-bold"
+						>No users found</TableCell
+					>
 				</TableRow>
-			{/each}
+			{/if}
 		</TableBody>
 	</Table>
 </div>
 
-<div class="flex justify-between items-center gap-4">
-	<div class="ml-2">
-		<p class="text-xs font-bold">
-			Page {pageIndex + 1} of {pageCount}
-		</p>
-	</div>
-	<div class="flex items-center justify-end space-x-2 py-2">
-		<Button
-			variant="outline"
-			size="sm"
-			on:click={() => (pageIndex = pageIndex - 1)}
-			disabled={!hasPreviousPage}
+<AlertDialog bind:open={deleteUserDialogOpen}>
+	<AlertDialogContent>
+		<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+		<AlertDialogDescription
+			>Are you sure you want to delete the user <span class="font-bold">{activeUser?.username}</span
+			>?</AlertDialogDescription
 		>
-			<ChevronLeft class="w-3 h-3" />
-		</Button>
-		<Button
-			variant="outline"
-			size="sm"
-			disabled={!hasNextPage}
-			on:click={() => (pageIndex = pageIndex + 1)}
-		>
-			<ChevronRight class="w-3 h-3" />
-		</Button>
+		<AlertDialogFooter>
+			<Button variant="outline" size="sm" on:click={() => (deleteUserDialogOpen = false)}
+				>No, cancel</Button
+			>
+			<Button variant="destructive" size="sm" on:click={handleDeleteUser}>Yes, delete</Button>
+		</AlertDialogFooter>
+	</AlertDialogContent>
+</AlertDialog>
+
+{#if !loading}
+	<div class="flex justify-between items-center gap-4">
+		<div class="ml-2">
+			<p class="text-xs font-bold">Page {page} of {pageCount}</p>
+		</div>
+		<div class="flex items-center justify-end space-x-2 py-2">
+			<Button
+				variant="outline"
+				size="sm"
+				on:click={() => handlePreviousPage()}
+				disabled={!hasPreviousPage}
+			>
+				<ChevronLeft class="w-3 h-3" />
+			</Button>
+			<Button variant="outline" size="sm" disabled={!hasNextPage} on:click={() => handleNextPage()}>
+				<ChevronRight class="w-3 h-3" />
+			</Button>
+		</div>
 	</div>
-</div>
+{/if}

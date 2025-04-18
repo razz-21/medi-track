@@ -1,14 +1,40 @@
 import { UserPostSchema } from '$lib/models/user/user.schema';
 import { UserStatusEnum } from '$lib/models/user/user.type';
-import type { User } from '$lib/models/user/user.type';
+import type { User, UserType } from '$lib/models/user/user.type';
 import userCollection from '$lib/server/mongo/collections/user.collection';
 import { hashPassword } from '$lib/utils/password.util';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ request }) => {
-	const users = await userCollection.find({}).toArray();
-	return new Response(JSON.stringify(users));
+export const GET: RequestHandler = async ({ url }) => {
+	const page = Number(url.searchParams.get('page'));
+	const limit = Number(url.searchParams.get('limit'));
+	const q = url.searchParams.get('q');
+	const type = url.searchParams.get('type') as UserType;
+
+	const users = await userCollection
+		.find({
+			$or: [
+				{ firstname: { $regex: q || '', $options: 'i' } },
+				{ lastname: { $regex: q || '', $options: 'i' } },
+				{ username: { $regex: q || '', $options: 'i' } }
+			],
+			...(type ? { role: type } : {})
+		})
+		.sort({ createdAt: -1 })
+		.skip((page - 1) * limit)
+		.limit(limit)
+		.toArray();
+
+	const totalUsers = await userCollection.countDocuments({});
+
+	const usersTable = {
+		count: totalUsers,
+		page,
+		limit,
+		users
+	};
+	return new Response(JSON.stringify(usersTable));
 };
 
 export const POST: RequestHandler = async ({ request }) => {
