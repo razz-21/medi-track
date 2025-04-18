@@ -29,8 +29,8 @@
 			tabindex="0"
 			class="sidebar-navigation-item"
 			class:active={activeRoute.includes(Routes.Dashboard)}
-			on:click={() => navigate(Routes.Dashboard)}
-			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Dashboard)}
+			onclick={() => navigate(Routes.Dashboard)}
+			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Dashboard)}
 		>
 			<ChartArea class="w-4 h-4" />
 			<span>Dashboard</span>
@@ -41,8 +41,8 @@
 			tabindex="0"
 			class="sidebar-navigation-item"
 			class:active={activeRoute.includes(Routes.Patients)}
-			on:click={() => navigate(Routes.Patients)}
-			on:keydown={(e) => e.key === 'Enter' && navigate(Routes.Patients)}
+			onclick={() => navigate(Routes.Patients)}
+			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Patients)}
 		>
 			<UserRoundPlus class="w-4 h-4" />
 			<span>Patients</span>
@@ -53,7 +53,14 @@
 			<span>Diagnosis</span>
 		</div>
 
-		<div class="sidebar-navigation-item">
+		<div
+			role="button"
+			tabindex="0"
+			class="sidebar-navigation-item"
+			class:active={activeRoute.includes(Routes.Users)}
+			onclick={() => navigate(Routes.Users)}
+			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Users)}
+		>
 			<Users class="w-4 h-4" />
 			<span>Users</span>
 		</div>
@@ -70,8 +77,8 @@
 				role="button"
 				tabindex="0"
 				class="sidebar-navigation-item"
-				on:click={handleLogout}
-				on:keydown={(e) => e.key === 'Enter' && handleLogout()}
+				onclick={handleLogout}
+				onkeydown={(e) => e.key === 'Enter' && handleLogout()}
 			>
 				<LogOut class="w-4 h-4" />
 				<span>Logout</span>
