@@ -17,7 +17,7 @@
 
 {@render children()}
 
-<Toaster />
+<Toaster duration={6000} closeButton={true} />
 
 <svelte:head>
 	<title>Meditrack</title>
