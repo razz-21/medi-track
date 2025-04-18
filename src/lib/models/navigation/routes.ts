@@ -3,5 +3,6 @@ export enum Routes {
 	Patients = '/app/patients',
 	PatientsCreate = '/app/patients/create',
 	Diagnosis = '/app/diagnosis',
-	Users = '/app/users'
+	Users = '/app/users',
+	UsersCreate = '/app/users/create'
 }
