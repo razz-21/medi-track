@@ -11,6 +11,7 @@
 	let userData: UserCreateFormData = $state({} as UserCreateFormData);
 	let loadingForm = $state(false);
 	let formErrors = $state({});
+
 	async function handleSubmit() {
 		loadingForm = true;
 		const toastId = toast.loading('Creating user...');

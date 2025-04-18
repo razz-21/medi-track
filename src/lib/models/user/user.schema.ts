@@ -9,9 +9,17 @@ export const UserSchema = z.object({
 	username: z.string(),
 	role: z.nativeEnum(UserTypeEnum),
 	password: z.string(),
-	status: z.enum(Object.values(UserStatusEnum) as [string, ...string[]]),
+	status: z.nativeEnum(UserStatusEnum),
 	createdAt: z.string().optional(),
 	updatedAt: z.string().optional()
 });
 
+export const UserGetSchema = UserSchema.omit({ password: true });
+
 export const UserPostSchema = UserSchema.omit({ createdAt: true, updatedAt: true, status: true });
+
+export const UserPatchSchema = UserSchema.omit({ _id: true, createdAt: true })
+	.extend({
+		currentPassword: z.string()
+	})
+	.partial();
