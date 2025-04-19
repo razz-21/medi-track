@@ -1,5 +1,5 @@
-import { UserGetTableSchema } from '$lib/models/user/user.schema';
 import { type UserGetTable, type UserGetTableUserParams } from '$lib/models/user/user.type';
+import { requestFetch } from '$lib/utils/fetch.utils';
 
 export async function getUserTableHandler(params: UserGetTableUserParams): Promise<UserGetTable> {
 	const searchParams = new URLSearchParams({
@@ -9,7 +9,7 @@ export async function getUserTableHandler(params: UserGetTableUserParams): Promi
 		...(params.type ? { type: params.type } : {})
 	});
 
-	const response = await fetch(`/api/user?${searchParams}`, {
+	const response = await requestFetch(`/api/user?${searchParams}`, {
 		method: 'GET'
 	});
 

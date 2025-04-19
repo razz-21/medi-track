@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/models/navigation/routes';
 	import { page } from '$app/stores';
-
+	import { logoutUserHandler } from '$lib/handler/login/logout-user.handler';
 	let activeRoute = $derived($page.url.pathname);
 
 	function navigate(path: string) {
@@ -11,7 +11,7 @@
 	}
 
 	function handleLogout() {
-		goto('/login');
+		logoutUserHandler();
 	}
 </script>
 
