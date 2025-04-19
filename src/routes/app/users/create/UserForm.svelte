@@ -151,8 +151,6 @@
 
 			const userType = UserTypeEnum[userData.role];
 			roleInitialSelected = { label: userType, value: userData.role };
-
-			console.log(userData);
 		}
 	}
 
