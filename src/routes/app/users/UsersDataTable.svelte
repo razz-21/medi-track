@@ -20,8 +20,7 @@
 		AlertDialogContent,
 		AlertDialogDescription,
 		AlertDialogFooter,
-		AlertDialogTitle,
-		AlertDialogTrigger
+		AlertDialogTitle
 	} from '$lib/components/ui/alert-dialog';
 	import UserTypePill from './UserTypePill.svelte';
 

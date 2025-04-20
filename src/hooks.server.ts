@@ -34,7 +34,9 @@ const authenticationHook: Handle = async ({ event, resolve }) => {
 		let token =
 			event.request.headers.get('Authorization')?.split(' ')[1] ||
 			event.cookies.get(AUTH_STORAGE_KEY);
+
 		if (!token) {
+			console.log('NO TOKEN');
 			return redirect(302, Routes.Login);
 		}
 
@@ -78,6 +80,7 @@ const authenticationHook: Handle = async ({ event, resolve }) => {
 };
 
 export const handleError: HandleServerError = async ({ error }) => {
+	console.error('error', error);
 	// TODO
 };
 

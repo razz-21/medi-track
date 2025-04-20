@@ -8,9 +8,9 @@
 	const { status }: Props = $props();
 
 	let color = $derived(() => {
-		if (status === 'active') return 'bg-emerald-100 text-emerald-700';
-		if (status === 'inactive') return 'bg-rose-100 text-rose-700';
-		return 'bg-gray-100 text-gray-600';
+		if (status === 'active') return 'border border-emerald-500 text-emerald-700';
+		if (status === 'deleted') return 'border border-rose-500 text-rose-700';
+		return 'border border-gray-500 text-gray-600';
 	});
 </script>
 

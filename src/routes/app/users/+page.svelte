@@ -32,7 +32,8 @@
 	let selectedRole = $state('');
 	let page = $state(1);
 	let limit = $state(10);
-	let total = $derived(usersTable.count ?? 0);
+	let total = $derived(usersTable.total ?? 0);
+	let count = $derived(usersTable.count ?? 0);
 	let loadingTable = $state(true);
 	let filterRoleInitialSelected = { label: 'All', value: '' };
 
@@ -96,7 +97,7 @@
 <div class="max-w-[1440px] flex flex-col gap-4">
 	<div class="flex items-center justify-between mt-4">
 		<div>
-			<h2 class="text-2xl font-bold">Users <span class="text-sm text-gray-400">({total})</span></h2>
+			<h2 class="text-2xl font-bold">Users <span class="text-sm text-gray-400">({count})</span></h2>
 			<p class="text-xs text-gray-400">List of all users</p>
 		</div>
 
