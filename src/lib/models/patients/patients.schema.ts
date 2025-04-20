@@ -13,13 +13,14 @@ export const PatientRelevantInformationSchema = z.object({
 });
 
 export const PatientStatusSchema = z.nativeEnum(PatientStatusEnum);
+export const PatientGenderSchema = z.nativeEnum(GenderEnum);
 
 export const PatientSchema = z.object({
 	_id: UUIDSchema,
 	firstname: z.string(),
 	middlename: z.string().nullable().default(null),
 	lastname: z.string(),
-	gender: z.nativeEnum(GenderEnum),
+	gender: PatientGenderSchema,
 	date_of_birth: z.string(),
 	contact_number: z.string().nullable().default(null),
 	address: z.string(),
@@ -32,7 +33,7 @@ export const PatientSchema = z.object({
 	updated_at: z.string()
 });
 
-export const PatientGetTableUserParamsSchema = z.object({
+export const PatientGetTableParamsSchema = z.object({
 	page: z.number(),
 	limit: z.number(),
 	q: z.string().optional()
@@ -40,10 +41,11 @@ export const PatientGetTableUserParamsSchema = z.object({
 
 export const PatientGetTableSchema = z
 	.object({
+		total: z.number(),
 		count: z.number(),
 		patients: z.array(PatientSchema.omit({ relevant_information: true }))
 	})
-	.extend(PatientGetTableUserParamsSchema.shape);
+	.extend(PatientGetTableParamsSchema.shape);
 
 export const PatientGetSchema = PatientSchema;
 

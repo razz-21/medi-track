@@ -11,9 +11,7 @@ export const GET = async ({ params }) => {
 		return error(404, { message: 'Patient not found' });
 	}
 
-	const patientGet = PatientSchema.parse(patient);
-
-	return json(patientGet, { status: 200 });
+	return json(patient, { status: 200 });
 };
 
 export const PATCH = async ({ params, request }) => {

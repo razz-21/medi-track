@@ -15,9 +15,27 @@ export const GET: RequestHandler = async ({ url }) => {
 	const users = await userCollection
 		.find({
 			$or: [
-				{ firstname: { $regex: q || '', $options: 'i' } },
-				{ lastname: { $regex: q || '', $options: 'i' } },
-				{ username: { $regex: q || '', $options: 'i' } }
+				{
+					$expr: {
+						$regexMatch: {
+							input: {
+								$reduce: {
+									input: ['$firstname', '$lastname'],
+									initialValue: '',
+									in: {
+										$concat: [
+											'$$value',
+											{ $cond: [{ $eq: ['$$value', ''] }, '', ' '] },
+											{ $ifNull: ['$$this', ''] }
+										]
+									}
+								}
+							},
+							regex: q || '',
+							options: 'i'
+						}
+					}
+				}
 			],
 			...(type ? { role: type } : {})
 		})
@@ -26,14 +44,16 @@ export const GET: RequestHandler = async ({ url }) => {
 		.limit(limit)
 		.toArray();
 
-	const totalUsers = await userCollection.countDocuments({});
+	const totalUsers = await userCollection.estimatedDocumentCount({});
 
 	const usersTable = {
-		count: totalUsers,
+		total: totalUsers,
+		count: users.length,
 		page,
 		limit,
 		users
 	};
+
 	return new Response(JSON.stringify(usersTable));
 };
 

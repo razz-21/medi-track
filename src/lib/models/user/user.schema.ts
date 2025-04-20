@@ -23,6 +23,7 @@ export const UserGetTableUserParamsSchema = z.object({
 
 export const UserGetTableSchema = z
 	.object({
+		total: z.number(),
 		count: z.number(),
 		users: z.array(UserSchema.omit({ password: true }))
 	})
