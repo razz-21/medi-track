@@ -3,6 +3,7 @@ import userCollection from '$lib/server/mongo/collections/user.collection.js';
 import { verifyPassword } from '$lib/utils/password.util.js';
 import { generateToken } from '$lib/utils/jwt.utils.js';
 import { AUTH_STORAGE_KEY, REFRESH_STORAGE_KEY } from '$lib/models/common/constants';
+import { UserStatusEnum } from '$lib/models/user/user.type.js';
 
 export async function POST({ request, cookies }) {
 	const { username, password }: AuthLogin = await request.json();
@@ -14,6 +15,18 @@ export async function POST({ request, cookies }) {
 			JSON.stringify({
 				message:
 					'There is no user under this username. Contact your administrator if you think this is an error.'
+			}),
+			{
+				status: 401
+			}
+		);
+	}
+
+	if (user.status === UserStatusEnum.Inactive) {
+		return new Response(
+			JSON.stringify({
+				message:
+					'The account is inactive. Contact your administrator if you think this is an error.'
 			}),
 			{
 				status: 401

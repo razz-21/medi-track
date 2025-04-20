@@ -13,7 +13,6 @@
 	import { Save, ArrowLeft } from '@lucide/svelte';
 	import { z, ZodError } from 'zod';
 	import { UserTypeEnum, type UserType } from '$lib/models/user/user.type';
-	import type { Selected } from 'bits-ui';
 	import { onMount } from 'svelte';
 
 	export const UserFormMode = {
@@ -124,16 +123,7 @@
 	let formEl: HTMLFormElement;
 	let touched: Record<string, boolean> = $state({});
 	let formInvalid = $derived(Object.values(formErrors).some((errors) => errors.length > 0));
-	let roleSelection: Selected<UserType>[] = [
-		{
-			label: 'Admin',
-			value: UserTypeEnum.Admin
-		},
-		{
-			label: 'Encoder',
-			value: UserTypeEnum.Encoder
-		}
-	];
+
 	let roleInitialSelected = $state<{ label: string; value: UserType }>({
 		label: 'Encoder',
 		value: UserTypeEnum.Encoder
@@ -194,6 +184,7 @@
 			return;
 		}
 
+		if (formInvalid) return;
 		submit();
 	}
 

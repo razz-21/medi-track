@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/models/navigation/routes';
-	import type { User } from '$lib/models/user/user.type';
-	import { userStore } from '$lib/store/user.store';
+	import { isAuthenticated } from '$lib/utils/auth.util';
 
-	let { data }: { data: { user: User } } = $props();
-
-	$userStore = data.user;
-
-	if ($userStore) {
+	if (isAuthenticated()) {
 		goto(Routes.Dashboard);
 	} else {
 		goto(Routes.Login);

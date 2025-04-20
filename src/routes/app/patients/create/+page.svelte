@@ -2,13 +2,36 @@
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/models/navigation/routes';
 	import PatientForm from './PatientForm.svelte';
+	import type { PatientFormData } from './PatientForm.svelte';
+	import { createPatienthandler } from '$lib/handler/patients/create-patient.handler';
+	import { v4 as uuidv4 } from 'uuid';
+	import { type PatientPost } from '$lib/models/patients/patient.type';
+	import { toast } from 'svelte-sonner';
+
+	let patientData = $state<PatientFormData>({} as PatientFormData);
+	let loadingForm = $state(false);
 
 	function handleBack() {
 		goto(Routes.Patients);
 	}
 
-	function handleSubmit() {
-		console.log('submit');
+	async function handleSubmit() {
+		const toastId = toast.loading('Creating patient...');
+		loadingForm = true;
+		try {
+			const payload = {
+				_id: uuidv4(),
+				...patientData
+			} as PatientPost;
+
+			await createPatienthandler(payload);
+			toast.success('Patient created successfully', { id: toastId });
+			goto(Routes.Patients);
+		} catch (error) {
+			toast.error('Failed to create patient', { id: toastId });
+		} finally {
+			loadingForm = false;
+		}
 	}
 </script>
 
@@ -21,6 +44,6 @@
 	</div>
 
 	<div class="border border-gray-200 rounded-lg p-4">
-		<PatientForm back={handleBack} submit={handleSubmit} />
+		<PatientForm bind:patientData back={handleBack} submit={handleSubmit} />
 	</div>
 </div>
