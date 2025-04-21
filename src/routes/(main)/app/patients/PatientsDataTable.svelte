@@ -43,6 +43,13 @@
 	let hasPreviousPage = $state(true);
 	let hasNextPage = $state(true);
 
+	$effect(() => {
+		pageIndex = page;
+		pageCount = Math.ceil(total / limit);
+		hasPreviousPage = pageIndex > 1;
+		hasNextPage = pageIndex < pageCount;
+	});
+
 	function formateDate(date: string) {
 		return new Date(date).toLocaleDateString('en-US', {
 			month: 'long',

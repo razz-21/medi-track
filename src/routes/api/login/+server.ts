@@ -5,7 +5,7 @@ import { generateToken } from '$lib/utils/jwt.utils.js';
 import { AUTH_STORAGE_KEY, REFRESH_STORAGE_KEY } from '$lib/models/common/constants';
 import { UserStatusEnum } from '$lib/models/user/user.type.js';
 
-export async function POST({ request, cookies }) {
+export async function POST({ request, cookies, locals }) {
 	const { username, password }: AuthLogin = await request.json();
 
 	const user = await userCollection.findOne({ username });
@@ -59,6 +59,8 @@ export async function POST({ request, cookies }) {
 		sameSite: 'strict',
 		secure: process.env.NODE_ENV === 'production'
 	});
+
+	locals.user = restUser;
 
 	return new Response(
 		JSON.stringify({ message: 'Login successful', accessToken, refreshToken, user: restUser }),

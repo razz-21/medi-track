@@ -24,7 +24,7 @@
 >
 	<div class="flex items-center justify-center">
 		<RadioGroupPrimitive.ItemIndicator>
-			<Check class="fill-primary h-3.5 w-3.5" />
+			<Check class="text-primary h-2.5 w-2.5" strokeWidth={3} />
 		</RadioGroupPrimitive.ItemIndicator>
 	</div>
 </RadioGroupPrimitive.Item>
