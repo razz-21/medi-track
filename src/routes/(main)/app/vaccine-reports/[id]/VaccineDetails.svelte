@@ -55,6 +55,10 @@
 			deleteRecordAlertDialogOpen = false;
 		}
 	}
+
+	function handleAddNewRecord() {
+		addNewRecord?.();
+	}
 </script>
 
 <div class="flex flex-col gap-4">
@@ -62,25 +66,25 @@
 		<div class="flex gap-4">
 			<div class="w-1/3 flex flex-col gap-1">
 				<div class="text-xs font-bold text-gray-500">Vaccine</div>
-				<div class="text-xs font-medium">
+				<div class="text-sm font-medium">
 					<VaccineTypePill vaccineType={vaccineReport.type} />
 				</div>
 			</div>
 
 			<div class="w-1/3 flex flex-col">
 				<div class="text-xs font-bold text-gray-500">Description</div>
-				<div class="text-xs font-medium">{vaccineReport.description}</div>
+				<div class="text-sm font-medium">{vaccineReport.description}</div>
 			</div>
 
 			<div class="w-1/3 flex flex-col">
 				<div class="text-xs font-bold text-gray-500">Record date</div>
-				<div class="text-xs font-medium">
+				<div class="text-sm font-medium">
 					{format(new Date(vaccineReport.created_at), 'MMM d, yyyy')}
 				</div>
 			</div>
 		</div>
 	</div>
-	{#each vaccineReport.details ?? [] as detail}
+	{#each vaccineReport.details ?? [] as detail, index}
 		<div class="relative border border-dashed border-gray-300 rounded-lg p-4">
 			<div class="absolute top-2 right-2">
 				<AlertDialog bind:open={deleteRecordAlertDialogOpen}>
@@ -129,6 +133,7 @@
 	{/each}
 
 	<div class="flex justify-end">
-		<Button size="sm" on:click={() => addNewRecord?.()}>Add new record</Button>
+		<Button variant="outline" size="sm" on:click={() => handleAddNewRecord()}>Add new record</Button
+		>
 	</div>
 </div>

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { UUIDSchema } from '../common/common.schema';
 import { VaccineTypeEnum, Covid19VaccineTypeEnum } from './vaccine.type';
 import { PatientSchema } from '../patients/patients.schema';
+import { UserSchema } from '../user/user.schema';
 
 // Ensure enums are properly defined
 if (!VaccineTypeEnum || !Covid19VaccineTypeEnum) {
@@ -48,16 +49,22 @@ export const VaccineReportSchema = z.object({
 });
 
 export const VaccineReportGetTableParamsSchema = z.object({
-	page: z.number(),
-	limit: z.number(),
-	q: z.string().optional()
+	page: z.number().optional(),
+	limit: z.number().optional(),
+	q: z.string().optional(),
+	type: z.nativeEnum(VaccineTypeEnum).optional()
 });
 
 export const VaccineReportGetTableSchema = z
 	.object({
 		total: z.number(),
 		count: z.number(),
-		reports: z.array(VaccineReportSchema.omit({ details: true }))
+		reports: z.array(
+			VaccineReportSchema.omit({ details: true }).extend({
+				patient: PatientSchema,
+				create_by_user: UserSchema
+			})
+		)
 	})
 	.extend(VaccineReportGetTableParamsSchema.shape);
 
@@ -83,6 +90,7 @@ export type VaccineBaseDetailsArray = z.infer<typeof VaccineBaseDetailsArraySche
 export type Covid19VaccineDetails = z.infer<typeof Covid19VaccineDetailsSchema>;
 export type Covid19VaccineDetailsArray = z.infer<typeof Covid19VaccineDetailsArraySchema>;
 export type VaccineReportGetTable = z.infer<typeof VaccineReportGetTableSchema>;
+export type VaccineReportsTableParams = z.infer<typeof VaccineReportGetTableParamsSchema>;
 export type VaccineReportPost = z.infer<typeof VaccineReportPostSchema>;
 export type VaccineReportGet = z.infer<typeof VaccineReportGetSchema>;
 export type VaccineReportPatch = z.infer<typeof VaccineReportPatchSchema>;

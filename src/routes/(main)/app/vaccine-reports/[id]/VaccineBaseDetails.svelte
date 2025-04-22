@@ -15,31 +15,31 @@
 	<div class="flex gap-4">
 		<div class="w-1/3 flex flex-col">
 			<div class="text-xs font-bold text-gray-500">Dose</div>
-			<div class="text-xs font-medium">{details.dose}</div>
+			<div class="text-sm font-medium">{details.dose}</div>
 		</div>
 
 		<div class="w-1/3 flex flex-col">
 			<div class="text-xs font-bold text-gray-500">Immunization Date</div>
-			<div class="text-xs font-medium">
+			<div class="text-sm font-medium">
 				{format(new Date(details.immunization_date), 'MMM d, yyyy')}
 			</div>
 		</div>
 
 		<div class="w-1/3 flex flex-col">
 			<div class="text-xs font-bold text-gray-500">Weight</div>
-			<div class="text-xs font-medium">{details.weight} kg</div>
+			<div class="text-sm font-medium">{details.weight} kg</div>
 		</div>
 	</div>
 
 	<div class="flex gap-4">
 		<div class="w-1/3 flex flex-col">
 			<div class="text-xs font-bold text-gray-500">Height</div>
-			<div class="text-xs font-medium">{details.height} cm</div>
+			<div class="text-sm font-medium">{details.height} cm</div>
 		</div>
 
 		<div class="w-1/3 flex flex-col">
 			<div class="text-xs font-bold text-gray-500">Remarks</div>
-			<div class="text-xs font-medium">{details.remarks}</div>
+			<div class="text-sm font-medium">{details.remarks}</div>
 		</div>
 
 		<div class="w-1/3 flex flex-col" />

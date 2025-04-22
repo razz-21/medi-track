@@ -3,8 +3,8 @@ export enum VaccineTypeEnum {
 	HepaB1 = 'HepaB1',
 	Polio = 'Polio',
 	PCV = 'PCV',
-	Covid19 = 'COVID-19',
-	MMR = 'MMR'
+	MMR = 'MMR',
+	Covid19 = 'COVID-19'
 }
 
 export enum Covid19VaccineTypeEnum {

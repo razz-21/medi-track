@@ -51,3 +51,15 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 
 	return json(updatedVaccineReport, { status: 200 });
 };
+
+export const DELETE: RequestHandler = async ({ params }) => {
+	const { id } = params;
+
+	const result = await vaccineReportsCollection.deleteOne({ _id: id });
+
+	if (!result.deletedCount) {
+		return json({ error: 'Vaccine report not found' }, { status: 404 });
+	}
+
+	return json({ message: 'Vaccine report deleted successfully' }, { status: 200 });
+};

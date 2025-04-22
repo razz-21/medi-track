@@ -1,5 +1,4 @@
 <script lang="ts" module>
-	import { VaccineTypeEnum, type VaccineReportGetTable } from '$lib/models/vaccine/vaccine.type';
 	import VaccineTypePill from './VaccineTypePill.svelte';
 	import VaccineReportDataTableActions from './VaccineReportDataTableActions.svelte';
 
@@ -21,6 +20,8 @@
 	} from '$lib/components/ui/table';
 	import { Routes } from '$lib/models/navigation/routes';
 	import { goto } from '$app/navigation';
+	import type { VaccineReportGetTable } from '$lib/models/vaccine/vaccine.schema';
+	import { format } from 'date-fns';
 
 	const { loading = $bindable(false), reports = [] }: Props = $props();
 </script>
@@ -29,12 +30,12 @@
 	<Table>
 		<TableHeader>
 			<TableRow>
-				<TableHead>Patient name</TableHead>
-				<TableHead>Vaccine type</TableHead>
-				<TableHead>Description</TableHead>
-				<TableHead>Created by</TableHead>
-				<TableHead>Created at</TableHead>
-				<TableHead></TableHead>
+				<TableHead class="text-xs font-medium">Patient name</TableHead>
+				<TableHead class="text-xs font-medium">Vaccine type</TableHead>
+				<TableHead class="text-xs font-medium">Description</TableHead>
+				<TableHead class="text-xs font-medium">Created by</TableHead>
+				<TableHead class="text-xs font-medium">Created at</TableHead>
+				<TableHead class="text-xs font-medium"></TableHead>
 			</TableRow>
 		</TableHeader>
 		<TableBody>
@@ -48,47 +49,46 @@
 						{/each}
 					</TableRow>
 				{/each}
-				<!-- {:else if reports.length === 0}
-        <TableRow>
-          <TableCell colspan={6}>
-            <p class="text-center text-sm font-medium text-gray-500">Reports not found</p>
-          </TableCell>
-        </TableRow> -->
-			{:else}
-				<!-- {#each reports as report}
-          <TableRow>
-            <TableCell>{report.patient_name}</TableCell>
-          </TableRow>
-        {/each} -->
+			{:else if reports.length === 0}
 				<TableRow>
-					<TableCell>
-						<div
-							role="button"
-							tabindex="0"
-							class="hover:underline hover:underline-offset-4 hover:decoration hover:decoration-green-700 hover:underline-2 cursor-pointer"
-							onclick={() => goto(`${Routes.VaccineReports}/1`)}
-							onkeydown={(e) => {
-								if (e.key === 'Enter') {
-									goto(`${Routes.VaccineReports}/1`);
-								}
-							}}
-						>
-							Patient name
-						</div>
-					</TableCell>
-					<TableCell><VaccineTypePill vaccineType={VaccineTypeEnum.HepaB1} /></TableCell>
-					<TableCell>After 24 hours</TableCell>
-					<TableCell>John Doe</TableCell>
-					<TableCell>2021-01-01</TableCell>
-					<TableCell>
-						<VaccineReportDataTableActions
-							id="1"
-							viewReport={() => {
-								goto(`${Routes.VaccineReports}/1`);
-							}}
-						/>
+					<TableCell colspan={6}>
+						<p class="text-center text-sm font-medium text-gray-500">Reports not found</p>
 					</TableCell>
 				</TableRow>
+			{:else}
+				{#each reports as report}
+					<TableRow>
+						<TableCell>
+							<div
+								role="button"
+								tabindex="0"
+								class="hover:underline hover:underline-offset-4 hover:decoration hover:decoration-green-700 hover:underline-2 cursor-pointer"
+								onclick={() => goto(`${Routes.VaccineReports}/${report._id}`)}
+								onkeydown={(e) => {
+									if (e.key === 'Enter') {
+										goto(`${Routes.VaccineReports}/${report._id}`);
+									}
+								}}
+							>
+								{report.patient.firstname}
+								{report.patient.lastname}
+							</div>
+						</TableCell>
+						<TableCell><VaccineTypePill vaccineType={report.type} /></TableCell>
+						<TableCell>{report.description || '-'}</TableCell>
+						<TableCell>{report.create_by_user.firstname} {report.create_by_user.lastname}</TableCell
+						>
+						<TableCell>{format(report.created_at, 'MMM d, yyyy h:mm a')}</TableCell>
+						<TableCell>
+							<VaccineReportDataTableActions
+								id={report._id}
+								viewReport={() => {
+									goto(`${Routes.VaccineReports}/${report._id}`);
+								}}
+							/>
+						</TableCell>
+					</TableRow>
+				{/each}
 			{/if}
 		</TableBody>
 	</Table>

@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { Separator } from '$lib/components/ui/separator';
-	import type {
-		VaccineReport,
-		VaccineReportGet,
-		VaccineReportPatch
-	} from '$lib/models/vaccine/vaccine.schema';
-	import { ArrowLeft, Mars } from '@lucide/svelte';
+	import type { VaccineReportGet, VaccineReportPatch } from '$lib/models/vaccine/vaccine.schema';
+	import { ArrowLeft, Mars, Trash, Venus } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import VaccineDetails from './VaccineDetails.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -21,8 +17,7 @@
 		SheetContent,
 		SheetDescription,
 		SheetHeader,
-		SheetTitle,
-		SheetTrigger
+		SheetTitle
 	} from '$lib/components/ui/sheet';
 	import VaccineInformationBaseForm, {
 		type VaccineInformationBaseDataForm
@@ -34,11 +29,20 @@
 	} from '../create/VaccineInformationCovid19Form.svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import { updateVaccineReportHandler } from '$lib/handler/vaccines/update-vaccine-report.handler';
-	// let id = page.params.id;
+	import { deleteVaccineReportHandler } from '$lib/handler/vaccines/delete-vaccine-report.handler';
+	import {
+		AlertDialog,
+		AlertDialogContent,
+		AlertDialogDescription,
+		AlertDialogFooter,
+		AlertDialogTitle
+	} from '$lib/components/ui/alert-dialog';
+	import { GenderEnum } from '$lib/models/common/common.types';
+
 	let maleAvatar = 'https://avatar.iran.liara.run/public/21';
 	let femaleAvatar = 'https://avatar.iran.liara.run/public/67';
 
-	let id = '6bfcc8a1-4084-4668-9f02-ce8c3ff697a0';
+	let id = page.params.id;
 	let vaccineReport = $state<VaccineReportGet | null>(null);
 	let selectedVaccineType = $derived(vaccineReport?.type ?? null);
 	let patient = $derived(vaccineReport?.patient);
@@ -54,13 +58,26 @@
 	);
 	let isAddNewRecordFormInvalid = $state(false);
 
-	function toggleAddNewRecordSheet() {
-		addNewRecordSheetOpen = !addNewRecordSheetOpen;
-	}
+	let deleteVaccineReportAlertDialogOpen = $state(false);
 
 	onMount(async () => {
 		await getPatient();
 	});
+
+	function toggleAddNewRecordSheet() {
+		if (vaccineReport?.type !== VaccineTypeEnum.Covid19) {
+			vaccineInformationBaseDataForm = {
+				weight: patient?.weight ?? 0,
+				height: patient?.height ?? 0
+			} as VaccineInformationBaseDataForm;
+		}
+
+		addNewRecordSheetOpen = !addNewRecordSheetOpen;
+	}
+
+	function toggleDeleteVaccineReportAlertDialog() {
+		deleteVaccineReportAlertDialogOpen = !deleteVaccineReportAlertDialogOpen;
+	}
 
 	async function getPatient() {
 		loading = true;
@@ -134,17 +151,40 @@
 			vaccineReport = await getVaccineReport(id);
 		}
 	}
+
+	async function handleDeleteVaccineReport() {
+		const toastId = toast.loading('Deleting vaccine report...');
+		try {
+			await deleteVaccineReportHandler(id);
+			toast.success('Vaccine report deleted', { id: toastId });
+			goto(Routes.VaccineReports);
+		} catch (error) {
+			console.error(error);
+			toast.error('Failed to delete vaccine report', { id: toastId });
+		}
+	}
 </script>
 
 <div class="max-w-[900px]">
 	<div class="flex items-center justify-between mt-4 mb-6">
 		<h2 class="text-2xl font-bold">Vaccine report details</h2>
-		<Button variant="outline" size="sm" on:click={handleBack}>
-			<div class="flex items-center gap-1">
-				<ArrowLeft class="w-4 h-4" />
-				Back
-			</div>
-		</Button>
+		<div class="flex gap-2">
+			<Button variant="outline" size="sm" on:click={handleBack}>
+				<div class="flex items-center gap-1">
+					<ArrowLeft class="w-4 h-4" />
+					Back
+				</div>
+			</Button>
+
+			{#if !loading}
+				<Button variant="destructive" size="sm" on:click={toggleDeleteVaccineReportAlertDialog}>
+					<div class="flex items-center gap-1">
+						<Trash class="w-4 h-4" />
+						Delete
+					</div>
+				</Button>
+			{/if}
+		</div>
 	</div>
 
 	{#if loading}
@@ -173,7 +213,11 @@
 								{format(new Date(patient?.date_of_birth ?? new Date()), 'MMM d, yyyy')}
 							</div>
 							<Separator orientation="vertical" class="h-4 bg-gray-300" />
-							<Mars class="w-4 h- text-blue-500" />
+							{#if patient?.gender === GenderEnum.MALE}
+								<Mars class="w-4 h-4 text-blue-500" />
+							{:else}
+								<Venus class="w-4 h-4 text-pink-500" />
+							{/if}
 						</div>
 						<div class="flex gap-2 items-center">
 							<p class="text-xs text-gray-500">{patient?.address}</p>
@@ -198,6 +242,20 @@
 	{/if}
 </div>
 
+<AlertDialog bind:open={deleteVaccineReportAlertDialogOpen}>
+	<AlertDialogContent>
+		<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+		<AlertDialogDescription>
+			Are you sure you want to delete this vaccine report? The record will be permanently removed
+			from the system.
+		</AlertDialogDescription>
+		<AlertDialogFooter>
+			<Button variant="outline" on:click={toggleDeleteVaccineReportAlertDialog}>No, cancel</Button>
+			<Button variant="destructive" on:click={handleDeleteVaccineReport}>Yes, delete</Button>
+		</AlertDialogFooter>
+	</AlertDialogContent>
+</AlertDialog>
+
 <Sheet bind:open={addNewRecordSheetOpen}>
 	<SheetContent side="right" class="w-[820px] sm:max-w-full">
 		<SheetHeader>
@@ -215,9 +273,9 @@
 							Vaccine type <span class="text-red-500">*</span>
 						</h2>
 						<RadioGroup value={selectedVaccineType}>
-							<div class="grid grid-cols-3 gap-4">
+							<div class="flex gap-4">
 								<div
-									class="border border-slate-300 rounded-md p-4 cursor-pointer min-h-32 bg-slate-100"
+									class="w-6/6 border border-slate-300 rounded-md p-4 cursor-pointer min-h-32 bg-slate-100"
 								>
 									<div class="relative h-full flex items-center justify-center gap-2">
 										<div class="absolute -top-4 -right-1">
