@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { User, Users, LogOut, ChartArea, UserRoundPlus, ClipboardMinus } from '@lucide/svelte';
+	import {
+		User,
+		Users,
+		LogOut,
+		ChartArea,
+		UserRoundPlus,
+		ClipboardMinus,
+		Syringe,
+		Dna
+	} from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/models/navigation/routes';
 	import { page } from '$app/stores';
@@ -48,9 +57,28 @@
 			<span>Patients</span>
 		</div>
 
-		<div class="sidebar-navigation-item">
-			<ClipboardMinus class="w-4 h-4" />
-			<span>Diagnosis</span>
+		<div
+			role="button"
+			tabindex="0"
+			class="sidebar-navigation-item"
+			class:active={activeRoute.includes(Routes.VaccineReports)}
+			onclick={() => navigate(Routes.VaccineReports)}
+			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.VaccineReports)}
+		>
+			<Syringe class="w-4 h-4" />
+			<span>Vaccine Reports</span>
+		</div>
+
+		<div
+			role="button"
+			tabindex="0"
+			class="sidebar-navigation-item"
+			class:active={activeRoute.includes(Routes.DiseaseReports)}
+			onclick={() => navigate(Routes.DiseaseReports)}
+			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.DiseaseReports)}
+		>
+			<Dna class="w-4 h-4" />
+			<span>Disease Reports</span>
 		</div>
 
 		<div

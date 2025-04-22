@@ -6,7 +6,11 @@ export enum Routes {
 	Patients = '/app/patients',
 	PatientsCreate = '/app/patients/create',
 	PatientsApi = '/api/patients',
-	Diagnosis = '/app/diagnosis',
+	VaccineReports = '/app/vaccine-reports',
+	VaccineReportsCreate = '/app/vaccine-reports/create',
+	VaccineReportsApi = '/api/vaccine/reports',
+	DiseaseReports = '/app/disease-reports',
+	DiseaseReportsCreate = '/app/disease-reports/create',
 	Users = '/app/users',
 	UsersCreate = '/app/users/create'
 }

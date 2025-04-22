@@ -34,8 +34,8 @@ export const PatientSchema = z.object({
 });
 
 export const PatientGetTableParamsSchema = z.object({
-	page: z.number(),
-	limit: z.number(),
+	page: z.number().optional(),
+	limit: z.number().optional(),
 	q: z.string().optional()
 });
 

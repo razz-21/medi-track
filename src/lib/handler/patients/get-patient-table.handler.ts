@@ -8,8 +8,8 @@ export async function getPatientTableHandler(
 	params: PatientGetTableParams
 ): Promise<PatientGetTable> {
 	const searchParams = new URLSearchParams({
-		page: params.page.toString(),
-		limit: params.limit.toString(),
+		...(params.page ? { page: params.page.toString() } : {}),
+		...(params.limit ? { limit: params.limit.toString() } : {}),
 		...(params.q ? { q: params.q } : {})
 	});
 
