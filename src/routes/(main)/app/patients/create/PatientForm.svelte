@@ -21,16 +21,24 @@
 	import { transformDotNotationObject } from '$lib/utils/common.util';
 
 	export const PatientFormSchema = z.object({
-		firstname: z.string().nonempty({ message: 'First name is required' }),
+		firstname: z.string({ required_error: 'First name is required' }).nonempty({
+			message: 'First name is required'
+		}),
 		middlename: z.string().nullable(),
-		lastname: z.string().nonempty({ message: 'Last name is required' }),
+		lastname: z.string({ required_error: 'Last name is required' }).nonempty({
+			message: 'Last name is required'
+		}),
 		gender: z.nativeEnum(GenderEnum, { required_error: 'Gender is required' }),
-		date_of_birth: z.string().nonempty({ message: 'Date of birth is required' }),
+		date_of_birth: z.string({ required_error: 'Date of birth is required' }).nonempty({
+			message: 'Date of birth is required'
+		}),
 		contact_number: z
 			.string()
 			.max(13, { message: 'Contact number must not exceed to 13 digits' })
 			.nullable(),
-		address: z.string().nonempty({ message: 'Address is required' }),
+		address: z.string({ required_error: 'Address is required' }).nonempty({
+			message: 'Address is required'
+		}),
 		weight: z.number().nullable(),
 		height: z.number().nullable(),
 		blood_type: z.string().nullable(),
@@ -137,17 +145,11 @@
 			height: data.height ? Number(data.height) : null
 		};
 
-		try {
+		const result = PatientFormSchema.safeParse(patientData);
+		if (!result.success) {
+			formErrors = result.error.flatten().fieldErrors;
+		} else {
 			formErrors = {};
-		} catch (error) {
-			if (error instanceof ZodError) {
-				const { fieldErrors: errors } = error.flatten();
-				formErrors = Object.fromEntries(
-					Object.entries(errors).map(([key, value]) => [key, value as string[]])
-				);
-			} else {
-				console.error(error);
-			}
 		}
 	}
 

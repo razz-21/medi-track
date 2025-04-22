@@ -165,7 +165,7 @@
 	}
 </script>
 
-<div class="max-w-[900px]">
+<div class="max-w-[1200px]">
 	<div class="flex items-center justify-between mt-4 mb-6">
 		<h2 class="text-2xl font-bold">Vaccine report details</h2>
 		<div class="flex gap-2">

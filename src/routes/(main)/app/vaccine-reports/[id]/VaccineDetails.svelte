@@ -73,7 +73,7 @@
 
 			<div class="w-1/3 flex flex-col">
 				<div class="text-xs font-bold text-gray-500">Description</div>
-				<div class="text-sm font-medium">{vaccineReport.description}</div>
+				<div class="text-sm font-medium">{vaccineReport.description || '-'}</div>
 			</div>
 
 			<div class="w-1/3 flex flex-col">
