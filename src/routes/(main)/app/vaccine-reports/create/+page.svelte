@@ -16,11 +16,6 @@
 	let selectedPatient = $state<Patient | null>(null);
 	let loading = $state(false);
 
-	function handleSubmit() {
-		console.log('vaccineReportData', JSON.parse(JSON.stringify(vaccineReportData)));
-		// console.log('vaccineReportData', JSON.stringify(vaccineReportData));
-	}
-
 	async function handleCreateVaccineReport() {
 		const toastId = toast.loading('Creating vaccine report...');
 		loading = true;

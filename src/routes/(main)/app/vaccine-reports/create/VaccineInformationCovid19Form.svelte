@@ -186,7 +186,7 @@
 				class={formErrors.vaccinator && touched.vaccinator
 					? 'border-red-500 focus-visible:ring-red-500'
 					: ''}
-				on:blur={() => handleFieldBlur('dose')}
+				on:blur={() => handleFieldBlur('vaccinator')}
 			/>
 			{#if formErrors.vaccinator && touched.vaccinator}
 				<p class="text-red-500 text-xs">{formErrors.vaccinator}</p>

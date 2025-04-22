@@ -4,7 +4,7 @@
 	import { untrack } from 'svelte';
 	import { SearchIcon, Mars, ArrowLeftIcon, Save, Venus } from '@lucide/svelte';
 	import { RadioGroup, RadioGroupItem } from '$lib/components/ui/radio-group';
-	import { VaccineTypeEnum } from '$lib/models/vaccine/vaccine.type';
+	import { VaccineTypeEnum, vaccineDefinitions } from '$lib/models/vaccine/vaccine.type';
 	import VaccineInformationBaseForm, {
 		initialVaccineInformationData,
 		VaccineInformationBaseFormSchema,
@@ -88,15 +88,6 @@
 		selectedPatient?.gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
 	);
 
-	const vaccineDefinitions: Record<VaccineTypeEnum, string> = {
-		[VaccineTypeEnum.BCG]: 'Given at birth to prevent tuberculosis',
-		[VaccineTypeEnum.HepaB1]: 'First dose at birth to prevent hepatitis B',
-		[VaccineTypeEnum.Polio]: 'Multiple doses in infancy to prevent polio',
-		[VaccineTypeEnum.PCV]: 'Multiple doses to prevent pneumococcal infections',
-		[VaccineTypeEnum.Covid19]: 'Initial doses plus boosters to prevent COVID-19',
-		[VaccineTypeEnum.MMR]: 'Initial dose plus boosters to prevent measles, mumps, and rubella'
-	};
-
 	let isFormInvalid = $derived(() => {
 		if (!selectedPatient) return true;
 
@@ -122,13 +113,16 @@
 	});
 
 	$effect(() => {
-		if (vaccineReportData.type !== VaccineTypeEnum.Covid19) {
-			vaccineReportData.details = {
-				...vaccineReportData.details,
-				weight: selectedPatient?.weight ?? 0,
-				height: selectedPatient?.height ?? 0
-			} as VaccineInformationBaseDataForm;
-		}
+		const patient = selectedPatient;
+		untrack(() => {
+			if (vaccineReportData.type !== VaccineTypeEnum.Covid19) {
+				vaccineReportData.details = {
+					...vaccineReportData.details,
+					weight: patient?.weight ?? 0,
+					height: patient?.height ?? 0
+				} as VaccineInformationBaseDataForm;
+			}
+		});
 	});
 
 	function validateForm() {

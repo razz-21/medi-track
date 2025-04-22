@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { UUIDSchema } from '../common/common.schema';
 import { VaccineTypeEnum, Covid19VaccineTypeEnum } from './vaccine.type';
+import { PatientSchema } from '../patients/patients.schema';
 
 // Ensure enums are properly defined
 if (!VaccineTypeEnum || !Covid19VaccineTypeEnum) {
@@ -60,13 +61,17 @@ export const VaccineReportGetTableSchema = z
 	})
 	.extend(VaccineReportGetTableParamsSchema.shape);
 
+export const VaccineReportGetSchema = VaccineReportSchema.extend({
+	patient: PatientSchema
+});
+
 export const VaccineReportPostSchema = VaccineReportSchema.omit({
 	_id: true,
 	created_at: true,
 	updated_at: true
 });
 
-export const VaccineReportPutSchema = VaccineReportSchema.omit({
+export const VaccineReportPatchSchema = VaccineReportSchema.omit({
 	_id: true,
 	created_at: true,
 	updated_at: true
@@ -79,3 +84,5 @@ export type Covid19VaccineDetails = z.infer<typeof Covid19VaccineDetailsSchema>;
 export type Covid19VaccineDetailsArray = z.infer<typeof Covid19VaccineDetailsArraySchema>;
 export type VaccineReportGetTable = z.infer<typeof VaccineReportGetTableSchema>;
 export type VaccineReportPost = z.infer<typeof VaccineReportPostSchema>;
+export type VaccineReportGet = z.infer<typeof VaccineReportGetSchema>;
+export type VaccineReportPatch = z.infer<typeof VaccineReportPatchSchema>;
