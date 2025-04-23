@@ -21,7 +21,7 @@ export const DiseaseReportSchema = z.object({
 export const DiseaseReportTableParamsSchema = z.object({
 	page: z.number().optional(),
 	limit: z.number().optional(),
-	disease_type: z.nativeEnum(DiseaseTypeEnum).optional(),
+	type: z.nativeEnum(DiseaseTypeEnum).optional(),
 	q: z.string().optional()
 });
 
@@ -41,8 +41,6 @@ export const DiseaseReportGetSchema = DiseaseReportSchema.omit({
 }).extend({ patient: PatientSchema, created_user_by: UserSchema });
 
 export const DiseaseReportPostSchema = DiseaseReportSchema.omit({
-	_id: true,
-	created_by: true,
 	created_at: true,
 	updated_at: true
 });

@@ -78,9 +78,9 @@
 		</TableHeader>
 		<TableBody>
 			{#if loading}
-				{#each Array(6) as _}
+				{#each Array(8) as _}
 					<TableRow>
-						{#each Array(6) as _}
+						{#each Array(8) as _}
 							<TableCell>
 								<Skeleton class="w-full h-6 rounded-md bg-slate-200" />
 							</TableCell>
@@ -120,12 +120,8 @@
 							</div>
 						</TableCell>
 						<TableCell>{format(report.date_diagnosed, 'MMM d, yyyy')}</TableCell>
-						<TableCell>
-							<div class="capitalize">
-								{report.mode_of_transmission}
-							</div>
-						</TableCell>
-						<TableCell>{format(report.created_at, 'MMM d, yyyy')}</TableCell>
+						<TableCell>{format(report.date_reported, 'MMM d, yyyy')}</TableCell>
+						<TableCell>{format(report.created_at, 'MMM d, yyyy hh:mm a')}</TableCell>
 						<TableCell>
 							<DiseaseReportDataTableActions
 								id={report._id}

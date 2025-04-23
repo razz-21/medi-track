@@ -5,73 +5,26 @@
 	import { Routes } from '$lib/models/navigation/routes';
 	import { Input } from '$lib/components/ui/input';
 	import { debounce } from '$lib/utils/common.util';
-	import type { DiseaseReportTable } from '$lib/models/disease/disease.schema';
-	import {
-		DiseaseICDCodeEnum,
-		DiseaseModeTransmissionEnum,
-		DiseaseTypeEnum
-	} from '$lib/models/disease/disease.type';
-	import { GenderEnum } from '$lib/models/common/common.types';
-	import { PatientStatusEnum } from '$lib/models/patients/patient.type';
+	import type {
+		DiseaseReportTable,
+		DiseaseReportTableParams
+	} from '$lib/models/disease/disease.schema';
 	import DiseaseReportDataTable from './DisaeaseReportDataTable.svelte';
+	import { getDiseaseReportsTable } from '$lib/handler/diseases/get-disease-reports-table.handler';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	let diseaseReportTable = $state<DiseaseReportTable>({} as DiseaseReportTable);
-	let count = $state(0);
 	let loadingTable = $state(false);
 	let page = $state(1);
 	let limit = $state(10);
-	let total = $state(0);
+	let count = $derived(diseaseReportTable.count ?? 0);
+	let total = $derived(diseaseReportTable.total ?? 0);
 	let diseaseReports = $derived(diseaseReportTable.reports ?? []);
 	let searchQuery = $state('');
 
-	const diseaseReportsTable = $state<DiseaseReportTable>({
-		total: 0,
-		count: 0,
-		reports: [
-			{
-				_id: '',
-				patient_id: '',
-				disease_type: DiseaseTypeEnum.Dengue,
-				icd_code: DiseaseICDCodeEnum.Dengue,
-				mode_of_transmission: DiseaseModeTransmissionEnum.Airborne,
-				date_diagnosed: new Date().toISOString(),
-				date_reported: new Date().toISOString(),
-				remarks: '',
-				created_by: '',
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-				patient: {
-					_id: '',
-					firstname: 'Leonardo',
-					lastname: 'Dela Cruz',
-					middlename: '',
-					gender: GenderEnum.FEMALE,
-					date_of_birth: '',
-					contact_number: '',
-					address: '',
-					weight: 0,
-					height: 0,
-					blood_type: '',
-					status: PatientStatusEnum.ACTIVE,
-					created_at: new Date().toISOString(),
-					updated_at: new Date().toISOString(),
-					relevant_information: null
-				},
-				created_user_by: {
-					_id: '',
-					firstname: '',
-					lastname: '',
-					username: '',
-					role: 'Encoder',
-					password: '',
-					status: 'Active',
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString()
-				}
-			}
-		],
-		page: 1,
-		limit: 10
+	onMount(async () => {
+		await fetchDiseaseReportsTable();
 	});
 
 	function handleCreateDiseaseReport() {
@@ -79,11 +32,31 @@
 	}
 
 	const searchDiseaseReports = debounce(() => {
-		// fetchDiseaseReportsTable();
+		fetchDiseaseReportsTable();
 	}, 300);
+
+	async function fetchDiseaseReportsTable() {
+		loadingTable = true;
+		try {
+			const params: DiseaseReportTableParams = {
+				page: page,
+				limit: limit,
+				...(searchQuery ? { q: searchQuery } : {})
+			};
+
+			diseaseReportTable = await getDiseaseReportsTable(params);
+			console.log(diseaseReportTable);
+		} catch (error) {
+			toast.error('Failed to fetch disease reports table');
+			console.error(error);
+		} finally {
+			loadingTable = false;
+		}
+	}
 
 	function handlePageChange(page: number) {
 		page = page;
+		fetchDiseaseReportsTable();
 	}
 </script>
 
@@ -127,7 +100,7 @@
 			bind:page
 			bind:limit
 			bind:total
-			reports={diseaseReportsTable.reports}
+			reports={diseaseReports}
 			pageChange={handlePageChange}
 		/>
 	</div>

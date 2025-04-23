@@ -14,12 +14,22 @@ export enum DiseaseICDCodeEnum {
 	TB = 'A15.0' // TB of lungs, confirmed by sputum microscopy with or without culture
 }
 
+export const DiseaseDefinitions = {
+	[DiseaseTypeEnum.Dengue]: 'Dengue fever (classical dengue)',
+	[DiseaseTypeEnum.Flu]: 'Influenza with other respiratory manifestations, seasonal influenza',
+	[DiseaseTypeEnum.Influenza]: 'Influenza, virus not identified, with respiratory manifestations',
+	[DiseaseTypeEnum.HIV]: 'HIV disease resulting in infectious/parasitic diseases',
+	[DiseaseTypeEnum.TB]: 'TB of lungs, confirmed by sputum microscopy with or without culture'
+};
+
 export enum DiseaseModeTransmissionEnum {
+	NA = 'N/A',
 	Airborne = 'Airborne',
 	Contact = 'Contact',
 	Vector = 'Vector',
 	Food = 'Food',
 	Water = 'Water',
 	Blood = 'Blood',
-	Unknown = 'Unknown'
+	Unknown = 'Unknown',
+	Others = 'Others'
 }
