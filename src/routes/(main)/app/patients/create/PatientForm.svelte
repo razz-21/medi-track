@@ -265,9 +265,7 @@
 							<Calendar
 								type="single"
 								bind:value={dateOfBirthValue}
-								onValueChange={(value) => {
-									handleBlur('date_of_birth');
-								}}
+								onValueChange={() => handleBlur('date_of_birth')}
 							/>
 						</Popover.Content>
 					</Popover.Root>
