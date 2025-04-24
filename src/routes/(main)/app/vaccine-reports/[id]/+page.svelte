@@ -61,7 +61,7 @@
 	let deleteVaccineReportAlertDialogOpen = $state(false);
 
 	onMount(async () => {
-		await getPatient();
+		await requestGetVaccineReport();
 	});
 
 	function toggleAddNewRecordSheet() {
@@ -79,7 +79,7 @@
 		deleteVaccineReportAlertDialogOpen = !deleteVaccineReportAlertDialogOpen;
 	}
 
-	async function getPatient() {
+	async function requestGetVaccineReport() {
 		loading = true;
 		try {
 			vaccineReport = await getVaccineReport(id);

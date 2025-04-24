@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class="flex items-center gap-1 rounded-md px-3 py-1 w-fit text-xs font-medium capitalize border border-gray-300 text-gray-900"
+	class="flex items-center gap-1 rounded-md px-3 py-1 w-fit text-xs font-bold capitalize border border-gray-300 text-gray-900"
 >
 	{#if type === UserTypeEnum.Admin}
 		<UserRoundCog class="w-3 h-3" />

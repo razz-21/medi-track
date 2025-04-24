@@ -16,6 +16,6 @@
 	});
 </script>
 
-<div class="rounded-md px-3 py-1 w-fit text-xs font-medium capitalize {color()}">
+<div class="rounded-md px-3 py-1 w-fit text-xs font-bold capitalize {color()}">
 	{status}
 </div>

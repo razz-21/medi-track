@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Sidebar from './Sidebar.svelte';
-	import { userStore } from '$lib/store/user.store';
 
 	let { children } = $props();
 </script>

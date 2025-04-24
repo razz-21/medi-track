@@ -17,8 +17,6 @@
 	let selectedPatient = $state(null);
 	let diseaseReportData = $state<DiseaseReportDataForm>(initialDiseaseReportData);
 
-	$inspect(diseaseReportData);
-
 	function handleCancel() {
 		goto(Routes.DiseaseReports);
 	}

@@ -45,7 +45,6 @@
 			};
 
 			diseaseReportTable = await getDiseaseReportsTable(params);
-			console.log(diseaseReportTable);
 		} catch (error) {
 			toast.error('Failed to fetch disease reports table');
 			console.error(error);

@@ -36,7 +36,7 @@
 	} from '@lucide/svelte';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { format } from 'date-fns';
-	import { untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { z } from 'zod';
 	import { Textarea } from '$lib/components/ui/textarea';
 
@@ -71,6 +71,11 @@
 
 	export type DiseaseReportDataForm = z.infer<typeof DiseaseReportForm>;
 	export type DiseaseReportFormErrors = Partial<Record<keyof DiseaseReportDataForm, string>>;
+	export const DiseaseReportMode = {
+		CREATE: 'create',
+		EDIT: 'edit'
+	} as const;
+	export type DiseaseReportMode = (typeof DiseaseReportMode)[keyof typeof DiseaseReportMode];
 
 	export const initialDiseaseReportData: DiseaseReportDataForm = {
 		patient_id: '',
@@ -82,9 +87,10 @@
 	};
 
 	type Props = {
+		mode?: DiseaseReportMode;
 		positiveButtonText?: string;
 		negativeButtonText?: string;
-		patients: Patient[];
+		patients?: Patient[];
 		selectedPatient?: Patient | null;
 		diseaseReportData?: DiseaseReportDataForm;
 		formErrors?: DiseaseReportFormErrors;
@@ -96,6 +102,7 @@
 
 <script lang="ts">
 	let {
+		mode = $bindable(DiseaseReportMode.CREATE),
 		positiveButtonText = 'Create report',
 		negativeButtonText = 'Cancel',
 		patients = $bindable([]),
@@ -123,7 +130,13 @@
 		selectedPatient?.gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
 	);
 
-	let diseaseTypes = $derived(Object.values(DiseaseTypeEnum));
+	let diseaseTypes = $derived(() => {
+		if (mode === DiseaseReportMode.EDIT) {
+			return [diseaseReportData.disease_type];
+		}
+
+		return Object.values(DiseaseTypeEnum);
+	});
 	let icdCodes = $derived(Object.values(DiseaseICDCodeEnum));
 	let modeOfTransmissions = $derived(Object.values(DiseaseModeTransmissionEnum));
 	let initialSelectedICDCode = $derived({
@@ -134,8 +147,12 @@
 		label: diseaseReportData.mode_of_transmission,
 		value: diseaseReportData.mode_of_transmission
 	});
-	let selectedDateDiagosed = $state<DateValue>(parseDate(format(new Date(), 'yyyy-MM-dd')));
-	let selectedDateReported = $state<DateValue>(parseDate(format(new Date(), 'yyyy-MM-dd')));
+	let selectedDateDiagosed = $state<DateValue>(
+		parseDate(format(diseaseReportData.date_diagnosed || new Date(), 'yyyy-MM-dd'))
+	);
+	let selectedDateReported = $state<DateValue>(
+		parseDate(format(diseaseReportData.date_reported || new Date(), 'yyyy-MM-dd'))
+	);
 
 	let touched = $state<Record<keyof DiseaseReportDataForm, boolean>>({
 		patient_id: false,
@@ -153,6 +170,9 @@
 
 	$effect(() => {
 		diseaseReportData.patient_id = selectedPatient?._id ?? '';
+		untrack(() => {
+			validateForm();
+		});
 	});
 
 	$effect(() => {
@@ -167,16 +187,14 @@
 	});
 
 	$effect(() => {
-		diseaseReportData.date_diagnosed = new Date(
-			selectedDateDiagosed.toDate(getLocalTimeZone())
-		).toISOString();
+		diseaseReportData.date_diagnosed = new Date(selectedDateDiagosed.toString()).toISOString();
 	});
 
 	$effect(() => {
-		diseaseReportData.date_reported = new Date(
-			selectedDateReported.toDate(getLocalTimeZone())
-		).toISOString();
+		diseaseReportData.date_reported = new Date(selectedDateReported.toString()).toISOString();
 	});
+
+	onMount(() => {});
 
 	function validateForm() {
 		const result = DiseaseReportForm.safeParse(diseaseReportData);
@@ -226,83 +244,85 @@
 
 <form class="flex flex-col gap-4" oninput={validateForm}>
 	<div class="flex gap-4">
-		<div class="w-1/2 flex flex-col gap-2">
-			<Label class="text-xs">Select patient <span class="text-red-500">*</span></Label>
-			<div class="relative">
-				<div class="absolute" style="left: 10px; top: 50%; transform: translateY(-50%);">
-					<SearchIcon class="text-gray-900 w-4 h-4" />
-				</div>
-				<Input
-					bind:value={patientSearchQuery}
-					type="search"
-					name="firstname"
-					placeholder="Search for a patient"
-					class="pl-8 {formErrors.patient_id && touched.patient_id
-						? 'border-red-500 focus-visible:ring-red-500'
-						: ''}"
-					on:click={() => (patientsSelectionDropdownOpen = true)}
-				/>
-				{#if patientsSelectionDropdownOpen && !!patientSearchQuery}
-					<div class="input-dropdown">
-						{#if filteredPatients().length > 0}
-							{#each filteredPatients() as patient (patient._id)}
-								<div
-									role="button"
-									tabindex="0"
-									class="input-dropdown-item"
-									onclick={() => handleSelectPatient(patient)}
-									onkeydown={(e) => handleSelectPatientByKeyboard(e, patient)}
-								>
-									<div class="flex items-center gap-2">
-										<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
-											<img
-												src={getAvatar()}
-												alt="Patient avatar"
-												class="w-full h-full object-cover"
-											/>
+		{#if mode === DiseaseReportMode.CREATE}
+			<div class="w-1/2 flex flex-col gap-2">
+				<Label class="text-xs">Select patient <span class="text-red-500">*</span></Label>
+				<div class="relative">
+					<div class="absolute" style="left: 10px; top: 50%; transform: translateY(-50%);">
+						<SearchIcon class="text-gray-900 w-4 h-4" />
+					</div>
+					<Input
+						bind:value={patientSearchQuery}
+						type="search"
+						name="firstname"
+						placeholder="Search for a patient"
+						class="pl-8 {formErrors.patient_id && touched.patient_id
+							? 'border-red-500 focus-visible:ring-red-500'
+							: ''}"
+						on:click={() => (patientsSelectionDropdownOpen = true)}
+					/>
+					{#if patientsSelectionDropdownOpen && !!patientSearchQuery}
+						<div class="input-dropdown">
+							{#if filteredPatients().length > 0}
+								{#each filteredPatients() as patient (patient._id)}
+									<div
+										role="button"
+										tabindex="0"
+										class="input-dropdown-item"
+										onclick={() => handleSelectPatient(patient)}
+										onkeydown={(e) => handleSelectPatientByKeyboard(e, patient)}
+									>
+										<div class="flex items-center gap-2">
+											<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
+												<img
+													src={getAvatar()}
+													alt="Patient avatar"
+													class="w-full h-full object-cover"
+												/>
+											</div>
+											<div>{patient.firstname} {patient.lastname}</div>
 										</div>
-										<div>{patient.firstname} {patient.lastname}</div>
+									</div>
+								{/each}
+							{:else}
+								<div class="input-dropdown-item">
+									<div class="flex items-center gap-2">
+										<div class="text-center">No patients found</div>
 									</div>
 								</div>
-							{/each}
-						{:else}
-							<div class="input-dropdown-item">
-								<div class="flex items-center gap-2">
-									<div class="text-center">No patients found</div>
-								</div>
-							</div>
-						{/if}
-					</div>
+							{/if}
+						</div>
+					{/if}
+				</div>
+				{#if formErrors.patient_id && touched.patient_id}
+					<p class="text-red-500 text-xs">{formErrors.patient_id}</p>
 				{/if}
 			</div>
-			{#if formErrors.patient_id && touched.patient_id}
-				<p class="text-red-500 text-xs">{formErrors.patient_id}</p>
-			{/if}
-		</div>
 
-		{#if selectedPatient}
-			<div class="w-1/2 flex flex-col gap-2">
-				<div class="border border-dashed border-slate-300 rounded-md p-4">
-					<div class="flex items-center justify-between gap-2">
-						<div class="flex gap-2">
-							<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
-								<img src={getAvatar()} alt="Patient avatar" class="w-full h-full object-cover" />
+			{#if selectedPatient}
+				<div class="w-1/2 flex flex-col gap-2">
+					<div class="border border-dashed border-slate-300 rounded-md p-4">
+						<div class="flex items-center justify-between gap-2">
+							<div class="flex gap-2">
+								<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
+									<img src={getAvatar()} alt="Patient avatar" class="w-full h-full object-cover" />
+								</div>
+								<div>{selectedPatient.firstname} {selectedPatient.lastname}</div>
 							</div>
-							<div>{selectedPatient.firstname} {selectedPatient.lastname}</div>
-						</div>
 
-						<div class="flex items-center gap-2 text-xs">
-							{#if patientGender() === GenderEnum.MALE}
-								<Mars class="w-5 h-5 text-blue-500" />
-							{:else}
-								<Venus class="w-5 h-5 text-pink-500" />
-							{/if}
-							<div class="h-6 w-[1px] bg-gray-300"></div>
-							<div>{format(selectedPatient.date_of_birth, 'MMM d, yyyy')}</div>
+							<div class="flex items-center gap-2 text-xs">
+								{#if patientGender() === GenderEnum.MALE}
+									<Mars class="w-5 h-5 text-blue-500" />
+								{:else}
+									<Venus class="w-5 h-5 text-pink-500" />
+								{/if}
+								<div class="h-6 w-[1px] bg-gray-300"></div>
+								<div>{format(selectedPatient.date_of_birth, 'MMM d, yyyy')}</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			{/if}
 		{/if}
 	</div>
 
@@ -310,7 +330,7 @@
 		<h2 class="text-xs font-medium mb-2">Disease type <span class="text-red-500">*</span></h2>
 		<RadioGroup bind:value={diseaseReportData.disease_type}>
 			<div class="grid grid-cols-3 gap-4">
-				{#each diseaseTypes as diseaseType}
+				{#each diseaseTypes() as diseaseType}
 					<div
 						role="button"
 						tabindex="0"

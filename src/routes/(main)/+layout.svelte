@@ -13,12 +13,12 @@
 		data
 	}: { children: Snippet; data: { user: User; patients: Promise<Patient[]> } } = $props();
 
-	userStore.set(data.user);
+	if (data.user) {
+		$userStore = data.user;
+	}
 
 	onMount(async () => {
-		if (isAuthenticated()) {
-			goto(Routes.Dashboard);
-		} else {
+		if (!isAuthenticated()) {
 			goto(Routes.Login);
 		}
 

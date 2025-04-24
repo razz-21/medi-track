@@ -47,6 +47,7 @@ export const DiseaseReportPostSchema = DiseaseReportSchema.omit({
 
 export const DiseaseReportPatchSchema = DiseaseReportSchema.omit({
 	_id: true,
+	patient_id: true,
 	created_by: true,
 	created_at: true,
 	updated_at: true
