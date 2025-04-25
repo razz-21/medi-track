@@ -1,8 +1,8 @@
 import { Routes } from '$lib/models/navigation/routes';
 import { requestFetch } from '$lib/utils/fetch.utils';
-import { DashboardGetSchema } from '$lib/models/dashboard/dashboard.schema';
+import { type DashboardGet } from '$lib/models/dashboard/dashboard.schema';
 
-export const getDashboardHandler = async (): Promise<DashboardGetSchema> => {
+export const getDashboardHandler = async (): Promise<DashboardGet> => {
 	const response = await requestFetch(Routes.DashboardApi);
 
 	if (!response.ok) {

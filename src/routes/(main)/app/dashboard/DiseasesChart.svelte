@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { DashboardGetSchema } from '$lib/models/dashboard/dashboard.schema';
+	import type { DashboardGet } from '$lib/models/dashboard/dashboard.schema';
 	import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
 	import {
 		BarController,
@@ -16,7 +16,7 @@
 	import { onMount } from 'svelte';
 
 	type Props = {
-		disease_datasets: DashboardGetSchema['disease_datasets'];
+		disease_datasets: DashboardGet['disease_datasets'];
 	};
 </script>
 

@@ -10,8 +10,6 @@
 	let userFirstNameLetter = $derived(user?.firstname?.[0]);
 	let activeRoute = $derived($page.url.pathname);
 
-	$inspect(user);
-
 	function navigate(path: string) {
 		goto(path);
 	}

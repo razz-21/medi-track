@@ -1,4 +1,5 @@
-<script lang="ts">
+<script lang="ts" module>
+	import type { DashboardStatsGet } from '$lib/models/dashboard/dashboard.schema';
 	import {
 		BarController,
 		BarElement,
@@ -11,6 +12,14 @@
 	} from 'chart.js';
 	import 'chart.js/auto';
 	import { onMount } from 'svelte';
+
+	type Props = {
+		vaccineDiseaseStats: DashboardStatsGet['vaccine_disease_stats'];
+	};
+</script>
+
+<script lang="ts">
+	let { vaccineDiseaseStats }: Props = $props();
 
 	const options: ChartOptions = {
 		scales: {
@@ -29,16 +38,18 @@
 		maintainAspectRatio: false
 	};
 
-	const data = {
-		labels: ['Vaccinated', 'Diseased'],
-		datasets: [
-			{
-				data: [33, 67],
-				backgroundColor: ['rgba(52, 211, 153, 1)', 'rgba(248, 113, 113, 1)'],
-				borderRadius: 8
-			}
-		]
-	};
+	let data = $derived(() => {
+		return {
+			labels: ['Vaccinated', 'Diseased'],
+			datasets: [
+				{
+					data: [vaccineDiseaseStats.vaccinated, vaccineDiseaseStats.diseased],
+					backgroundColor: ['rgba(52, 211, 153, 1)', 'rgba(248, 113, 113, 1)'],
+					borderRadius: 8
+				}
+			]
+		};
+	});
 
 	let canvasElement: HTMLCanvasElement;
 	let chart: Chart;
@@ -48,24 +59,24 @@
 	onMount(() => {
 		chart = new Chart(canvasElement, {
 			type: 'doughnut',
-			data: data,
+			data: data(),
 			options: options
 		});
 	});
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">
-	<h3 class="text-sm font-bold">Vaccines/Diseases percentage</h3>
-	<div class="flex items-center justify-between">
+	<h3 class="text-sm font-bold">Vaccines/Diseases stats</h3>
+	<div class="flex items-center justify-between mt-2">
 		<div class="flex flex-col gap-2">
 			<div class="flex items-center gap-2 text-xs">
-				<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-				<span>Vaccinated - <strong>33%</strong></span>
+				<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+				<span>Vaccinated - <strong>{vaccineDiseaseStats.vaccinated}%</strong></span>
 			</div>
 
 			<div class="flex items-center gap-2 text-xs">
-				<div class="w-2 h-2 bg-green-500 rounded-full"></div>
-				<span>Diseased - <strong>67%</strong></span>
+				<div class="w-2 h-2 bg-red-500 rounded-full"></div>
+				<span>Diseased - <strong>{vaccineDiseaseStats.diseased}%</strong></span>
 			</div>
 		</div>
 		<div>

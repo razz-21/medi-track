@@ -37,6 +37,35 @@ export const DashboardParamsSchema = z.object({
 
 export const DashboardGetSchema = DashboardSchema;
 
+export const DashboardStatsSchema = z.object({
+	disease_stats: z.array(
+		z.object({
+			type: z.nativeEnum(DiseaseTypeEnum),
+			value: z.number()
+		})
+	),
+	vaccine_stats: z.array(
+		z.object({
+			type: z.nativeEnum(VaccineTypeEnum),
+			value: z.number()
+		})
+	),
+	vaccine_disease_stats: z.object({
+		vaccinated: z.number(),
+		diseased: z.number()
+	})
+});
+
+export const DashboardStatsGetSchema = DashboardStatsSchema;
+
+export const DashboardStatsGetParamsSchema = z.object({
+	from: z.string(),
+	to: z.string()
+});
+
 export type Dashboard = z.infer<typeof DashboardSchema>;
 export type DashboardParams = z.infer<typeof DashboardParamsSchema>;
-export type DashboardGetSchema = z.infer<typeof DashboardGetSchema>;
+export type DashboardGet = z.infer<typeof DashboardGetSchema>;
+export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
+export type DashboardStatsGet = z.infer<typeof DashboardStatsGetSchema>;
+export type DashboardStatsGetParams = z.infer<typeof DashboardStatsGetParamsSchema>;

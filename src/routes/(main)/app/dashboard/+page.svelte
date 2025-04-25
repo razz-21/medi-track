@@ -4,6 +4,7 @@
 		ClipboardList,
 		ClipboardMinus,
 		ClipboardPlus,
+		Loader2,
 		UserRoundPlus,
 		Users
 	} from '@lucide/svelte';
@@ -22,20 +23,27 @@
 		CalendarDate,
 		DateFormatter,
 		getLocalTimeZone,
+		parseDate,
 		type DateValue
 	} from '@internationalized/date';
 	import { cn } from '$lib/utils';
 	import { getDashboardHandler } from '$lib/handler/dashboard/get-dashboard.handler';
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
-	import { DashboardGetSchema } from '$lib/models/dashboard/dashboard.schema';
+	import {
+		type DashboardGet,
+		type DashboardStatsGet
+	} from '$lib/models/dashboard/dashboard.schema';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { getDashboardStatsHandler } from '$lib/handler/dashboard/get-dashboard-stats.handler';
+	import { format, startOfYear } from 'date-fns';
+
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
 	});
 
 	let loading = $state(true);
-	let dashboard = $state<DashboardGetSchema | null>(null);
+	let dashboard = $state<DashboardGet | null>(null);
 	let totalPatients = $derived(dashboard?.totalPatients ?? 0);
 	let totalVaccineReports = $derived(dashboard?.totalVaccineReports ?? 0);
 	let totalDiseaseReports = $derived(dashboard?.totalDiseaseReports ?? 0);
@@ -44,21 +52,26 @@
 	let vaccineDatasets = $derived(dashboard?.vaccine_datasets ?? []);
 	let diseaseDatasets = $derived(dashboard?.disease_datasets ?? []);
 
-	let percentageFromDate: DateValue | undefined = undefined;
-	let percentageToDate: DateValue | undefined = undefined;
-
-	percentageFromDate = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, 1);
-	percentageToDate = new CalendarDate(
-		new Date().getFullYear(),
-		new Date().getMonth() + 1,
-		new Date().getDate()
+	let dashboardStats = $state<DashboardStatsGet | null>(null);
+	let dashboardStatsLoading = $state(true);
+	let dashboardStatsVaccine = $derived(dashboardStats?.vaccine_stats ?? []);
+	let dashboardStatsDisease = $derived(dashboardStats?.disease_stats ?? []);
+	let dashboardStatsVaccineDisease = $derived(
+		dashboardStats?.vaccine_disease_stats ?? { vaccinated: 0, diseased: 0 }
 	);
+
+	let percentageFromDate: DateValue = $state(
+		parseDate(format(startOfYear(new Date()), 'yyyy-MM-dd'))
+	);
+	let percentageToDate: DateValue = $state(parseDate(format(new Date(), 'yyyy-MM-dd')));
+	let today = $state(parseDate(format(new Date(), 'yyyy-MM-dd')));
 
 	let datePeriod = df.format(new Date());
 
 	onMount(async () => {
 		loading = true;
 		await fetchDashboard();
+		await fetchDashboardStats();
 		loading = false;
 	});
 
@@ -69,6 +82,22 @@
 		} catch (error) {
 			toast.error('Failed to fetch dashboard');
 			console.error(error);
+		}
+	}
+
+	async function fetchDashboardStats() {
+		dashboardStatsLoading = true;
+		try {
+			const result = await getDashboardStatsHandler({
+				from: format(new Date(percentageFromDate.toString()), 'yyyy-MM-dd'),
+				to: format(new Date(percentageToDate.toString()), 'yyyy-MM-dd')
+			});
+			dashboardStats = result;
+		} catch (error) {
+			toast.error('Failed to fetch dashboard stats');
+			console.error(error);
+		} finally {
+			dashboardStatsLoading = false;
 		}
 	}
 </script>
@@ -127,70 +156,80 @@
 				</Card>
 			</div>
 
-			<VaccinesChart vaccine_datasets={vaccineDatasets} />
-			<DiseasesChart disease_datasets={diseaseDatasets} />
+			<div class="flex flex-col gap-4 max-w-[1440px]">
+				<VaccinesChart vaccine_datasets={vaccineDatasets} />
+				<DiseasesChart disease_datasets={diseaseDatasets} />
 
-			<div class="flex flex-col gap-2">
-				<div class="flex items-center gap-2">
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'max-w-[240px] w-full justify-start text-left font-normal shadow-none',
-									!percentageFromDate && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{percentageFromDate
-									? df.format(percentageFromDate.toDate(getLocalTimeZone()))
-									: 'From'}
-							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value={percentageFromDate} />
-						</Popover.Content>
-					</Popover.Root>
-					<span>-</span>
-					<Popover.Root>
-						<Popover.Trigger asChild let:builder>
-							<Button
-								variant="outline"
-								class={cn(
-									'max-w-[240px] w-full justify-start text-left font-normal shadow-none',
-									!percentageToDate && 'text-muted-foreground'
-								)}
-								builders={[builder]}
-							>
-								<CalendarIcon class="mr-2 h-4 w-4" />
-								{percentageToDate ? df.format(percentageToDate.toDate(getLocalTimeZone())) : 'To'}
-							</Button>
-						</Popover.Trigger>
-						<Popover.Content class="w-auto p-0" align="start">
-							<Calendar bind:value={percentageToDate} />
-						</Popover.Content>
-					</Popover.Root>
+				<div class="flex flex-col gap-2">
+					<div class="flex items-center gap-2">
+						<Popover.Root>
+							<Popover.Trigger asChild let:builder>
+								<Button
+									variant="outline"
+									class={cn(
+										'max-w-[240px] w-full justify-start text-left font-normal shadow-none',
+										!percentageFromDate && 'text-muted-foreground'
+									)}
+									builders={[builder]}
+								>
+									<CalendarIcon class="mr-2 h-4 w-4" />
+									{percentageFromDate
+										? df.format(percentageFromDate.toDate(getLocalTimeZone()))
+										: 'From'}
+								</Button>
+							</Popover.Trigger>
+							<Popover.Content class="w-auto p-0" align="start">
+								<Calendar bind:value={percentageFromDate} onValueChange={fetchDashboardStats} />
+							</Popover.Content>
+						</Popover.Root>
+						<span>-</span>
+						<Popover.Root>
+							<Popover.Trigger asChild let:builder>
+								<Button
+									variant="outline"
+									class={cn(
+										'max-w-[240px] w-full justify-start text-left font-normal shadow-none',
+										!percentageToDate && 'text-muted-foreground'
+									)}
+									builders={[builder]}
+								>
+									<CalendarIcon class="mr-2 h-4 w-4" />
+									{percentageToDate ? df.format(percentageToDate.toDate(getLocalTimeZone())) : 'To'}
+								</Button>
+							</Popover.Trigger>
+							<Popover.Content class="w-auto p-0" align="start">
+								<Calendar
+									bind:value={percentageToDate}
+									minValue={percentageFromDate}
+									maxValue={today}
+									onValueChange={fetchDashboardStats}
+								/>
+							</Popover.Content>
+						</Popover.Root>
+						{#if dashboardStatsLoading}
+							<Loader2 class="w-6 h-6 text-green-500 animate-spin" />
+						{/if}
+					</div>
+					<div class="flex gap-4">
+						<div class="w-1/3">
+							<DiseasesPercentageChart dashboardStats={dashboardStatsDisease} />
+						</div>
+						<div class="w-1/3">
+							<VaccinesPercentageChart vaccineStats={dashboardStatsVaccine} />
+						</div>
+						<div class="w-1/3">
+							<VaccinesDiseasePercentageChart vaccineDiseaseStats={dashboardStatsVaccineDisease} />
+						</div>
+					</div>
 				</div>
+
 				<div class="flex gap-4">
-					<div class="w-1/3">
-						<DiseasesPercentageChart />
+					<div class="w-1/2">
+						<DiseasePerBaranggayChart />
 					</div>
-					<div class="w-1/3">
-						<VaccinesPercentageChart />
+					<div class="w-1/2">
+						<VaccinesPerBaranggayChart />
 					</div>
-					<div class="w-1/3">
-						<VaccinesDiseasePercentageChart />
-					</div>
-				</div>
-			</div>
-
-			<div class="flex gap-4">
-				<div class="w-1/2">
-					<DiseasePerBaranggayChart />
-				</div>
-				<div class="w-1/2">
-					<VaccinesPerBaranggayChart />
 				</div>
 			</div>
 		</div>
