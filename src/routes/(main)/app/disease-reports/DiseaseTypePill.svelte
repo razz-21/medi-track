@@ -19,7 +19,7 @@
 			case DiseaseTypeEnum.Influenza:
 				return 'border-red-300 text-red-700';
 			case DiseaseTypeEnum.TB:
-				return 'border-blue-300 text-blue-700';
+				return 'border-violet-300 text-violet-700';
 			default:
 				return 'border-slate-300 text-slate-700';
 		}

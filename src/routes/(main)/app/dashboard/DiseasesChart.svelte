@@ -1,4 +1,6 @@
-<script lang="ts">
+<script lang="ts" module>
+	import type { DashboardGetSchema } from '$lib/models/dashboard/dashboard.schema';
+	import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
 	import {
 		BarController,
 		BarElement,
@@ -7,10 +9,28 @@
 		LinearScale,
 		TimeScale,
 		Tooltip,
+		type ChartDataset,
 		type ChartOptions
 	} from 'chart.js';
 	import 'chart.js/auto';
 	import { onMount } from 'svelte';
+
+	type Props = {
+		disease_datasets: DashboardGetSchema['disease_datasets'];
+	};
+</script>
+
+<script lang="ts">
+	let { disease_datasets }: Props = $props();
+
+	let diseaseTypes = $derived(Object.values(DiseaseTypeEnum));
+	let diseaseTypesColor = $state({
+		[DiseaseTypeEnum.Dengue]: 'rgb(56, 189, 248)',
+		[DiseaseTypeEnum.Flu]: 'rgb(74, 222, 128)',
+		[DiseaseTypeEnum.HIV]: 'rgb(251, 191, 36)',
+		[DiseaseTypeEnum.Influenza]: 'rgb(248, 113, 113)',
+		[DiseaseTypeEnum.TB]: 'rgb(167, 139, 250)'
+	});
 
 	const options: ChartOptions = {
 		scales: {
@@ -21,13 +41,21 @@
 				grid: {
 					display: false
 				}
+			},
+			y: {
+				ticks: {
+					precision: 0
+				},
+				beginAtZero: true,
+				min: 0,
+				suggestedMax: 4
 			}
 		},
 		maintainAspectRatio: false
 	};
 
-	const data = {
-		labels: [
+	let data = $derived(() => {
+		const labels = [
 			'January',
 			'February',
 			'March',
@@ -40,37 +68,40 @@
 			'October',
 			'November',
 			'December'
-		],
-		datasets: [
-			{
-				label: 'Covid',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(59, 130, 246, 1)',
-				borderColor: 'rgba(59, 130, 246, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'HIV',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(232, 121, 249, 1)',
-				borderColor: 'rgba(232, 121, 249, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'Tuberculosis',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(253, 224, 71, 1)',
-				borderColor: 'rgba(253, 224, 71, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
+		];
+
+		const datasets: ChartDataset[] = [];
+
+		diseaseTypes.forEach((diseaseType) => {
+			const dataset = disease_datasets.find((dataset) => dataset.type === diseaseType);
+			if (dataset) {
+				datasets.push({
+					label: dataset.type,
+					data: dataset.value.map((v) => v.value),
+					backgroundColor: diseaseTypesColor[diseaseType],
+					borderColor: diseaseTypesColor[diseaseType],
+					borderWidth: 1,
+					borderRadius: 4,
+					borderSkipped: false
+				});
+			} else {
+				datasets.push({
+					label: diseaseType,
+					data: labels.map(() => 0),
+					backgroundColor: diseaseTypesColor[diseaseType],
+					borderColor: diseaseTypesColor[diseaseType],
+					borderWidth: 1,
+					borderRadius: 4,
+					borderSkipped: false
+				});
 			}
-		]
-	};
+		});
+
+		return {
+			labels: labels,
+			datasets: datasets
+		};
+	});
 
 	let canvasElement: HTMLCanvasElement;
 	let chart: Chart;
@@ -80,7 +111,7 @@
 	onMount(() => {
 		chart = new Chart(canvasElement, {
 			type: 'bar',
-			data: data,
+			data: data(),
 			options: options
 		});
 	});

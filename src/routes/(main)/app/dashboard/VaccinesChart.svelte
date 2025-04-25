@@ -1,4 +1,6 @@
-<script lang="ts">
+<script lang="ts" module>
+	import type { DashboardGetSchema } from '$lib/models/dashboard/dashboard.schema';
+	import { VaccineTypeEnum } from '$lib/models/vaccine/vaccine.type';
 	import {
 		BarController,
 		BarElement,
@@ -7,10 +9,29 @@
 		LinearScale,
 		TimeScale,
 		Tooltip,
+		type ChartDataset,
 		type ChartOptions
 	} from 'chart.js';
 	import 'chart.js/auto';
 	import { onMount } from 'svelte';
+
+	type Props = {
+		vaccine_datasets: DashboardGetSchema['vaccine_datasets'];
+	};
+</script>
+
+<script lang="ts">
+	let { vaccine_datasets }: Props = $props();
+
+	let vaccineTypes = $derived(Object.values(VaccineTypeEnum));
+	let vaccineTypesColor = $state({
+		[VaccineTypeEnum.Covid19]: 'rgb(134, 239, 172)',
+		[VaccineTypeEnum.BCG]: 'rgb(125, 211, 252)',
+		[VaccineTypeEnum.Polio]: 'rgb(196, 181, 253)',
+		[VaccineTypeEnum.HepaB1]: 'rgb(252, 211, 77)',
+		[VaccineTypeEnum.PCV]: 'rgb(147, 197, 253)',
+		[VaccineTypeEnum.MMR]: 'rgb(252, 165, 165)'
+	});
 
 	const options: ChartOptions = {
 		scales: {
@@ -21,13 +42,21 @@
 				grid: {
 					display: false
 				}
+			},
+			y: {
+				ticks: {
+					precision: 0
+				},
+				beginAtZero: true,
+				min: 0,
+				suggestedMax: 5
 			}
 		},
 		maintainAspectRatio: false
 	};
 
-	const data = {
-		labels: [
+	let data = $derived(() => {
+		const labels = [
 			'January',
 			'February',
 			'March',
@@ -40,55 +69,40 @@
 			'October',
 			'November',
 			'December'
-		],
-		datasets: [
-			{
-				label: 'Flu',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(52, 211, 153, 1)',
-				borderColor: 'rgba(52, 211, 153, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'Covid',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(59, 130, 246, 1)',
-				borderColor: 'rgba(59, 130, 246, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'Measles',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(232, 121, 249, 1)',
-				borderColor: 'rgba(232, 121, 249, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'Polio',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(251, 191, 36, 1)',
-				borderColor: 'rgba(251, 191, 36, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
-			},
-			{
-				label: 'Rabbies',
-				data: [12, 19, 3, 5, 2, 3, 10, 12, 19, 3, 5, 2],
-				backgroundColor: 'rgba(248, 113, 113, 1)',
-				borderColor: 'rgba(248, 113, 113, 1)',
-				borderWidth: 1,
-				borderRadius: 4,
-				borderSkipped: false
+		];
+
+		const datasets: ChartDataset[] = [];
+
+		vaccineTypes.forEach((vaccineType) => {
+			const dataset = vaccine_datasets.find((dataset) => dataset.type === vaccineType);
+			if (dataset) {
+				datasets.push({
+					label: dataset.type,
+					data: dataset.value.map((v) => v.value),
+					backgroundColor: vaccineTypesColor[vaccineType],
+					borderColor: vaccineTypesColor[vaccineType],
+					borderWidth: 1,
+					borderRadius: 4,
+					borderSkipped: false
+				});
+			} else {
+				datasets.push({
+					label: vaccineType,
+					data: labels.map(() => 0),
+					backgroundColor: vaccineTypesColor[vaccineType],
+					borderColor: vaccineTypesColor[vaccineType],
+					borderWidth: 1,
+					borderRadius: 4,
+					borderSkipped: false
+				});
 			}
-		]
-	};
+		});
+
+		return {
+			labels: labels,
+			datasets: datasets
+		};
+	});
 
 	let canvasElement: HTMLCanvasElement;
 	let chart: Chart;
@@ -98,7 +112,7 @@
 	onMount(() => {
 		chart = new Chart(canvasElement, {
 			type: 'bar',
-			data: data,
+			data: data(),
 			options: options
 		});
 	});

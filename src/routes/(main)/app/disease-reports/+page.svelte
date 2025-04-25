@@ -53,8 +53,8 @@
 		}
 	}
 
-	function handlePageChange(page: number) {
-		page = page;
+	function handlePageChange(pageChange: number) {
+		page = pageChange;
 		fetchDiseaseReportsTable();
 	}
 </script>

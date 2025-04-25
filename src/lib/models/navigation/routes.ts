@@ -3,6 +3,7 @@ export enum Routes {
 	LoginApi = '/api/login',
 	App = '/app',
 	Dashboard = '/app/dashboard',
+	DashboardApi = '/api/dashboard',
 	Patients = '/app/patients',
 	PatientsCreate = '/app/patients/create',
 	PatientsApi = '/api/patients',

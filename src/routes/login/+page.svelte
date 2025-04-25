@@ -50,8 +50,16 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-screen bg-gray-100">
-	<div class="rounded-lg p-6 lg:p-10 w-full max-w-[30rem] bg-white">
+<div class="relative flex flex-col items-center justify-center h-screen">
+	<div class="absolute inset-0 bg-gray-100 opacity-50 h-full w-full blur-3xl">
+		<div
+			class="absolute right-[2rem] top-[6rem] h-[20rem] w-[20rem] rounded-full bg-gradient-to-b from-green-300 to-blue-300"
+		></div>
+		<div
+			class="absolute left-[2rem] bottom-[6rem] h-[20rem] w-[20rem] rounded-full bg-gradient-to-t from-emerald-300 to-purple-300"
+		></div>
+	</div>
+	<div class="z-10 rounded-lg p-6 lg:p-10 w-full max-w-[30rem] bg-white shadow-lg">
 		<img src="/logo/meditrack-logo.svg" alt="Meditrack" class="size-12 mx-auto mb-4" />
 
 		<h2 class="text-3xl font-bold text-center mb-1">Welcome to Meditrack</h2>

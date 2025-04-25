@@ -20,7 +20,7 @@
 			case VaccineTypeEnum.PCV:
 				return 'border-blue-300 text-blue-700';
 			case VaccineTypeEnum.Polio:
-				return 'border-purple-300 text-purple-700';
+				return 'border-violet-300 text-violet-700';
 			default:
 				return 'border-slate-300 text-slate-700';
 		}
