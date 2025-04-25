@@ -7,7 +7,6 @@
 		TableCell,
 		Table
 	} from '$lib/components/ui/table';
-	import { onMount } from 'svelte';
 
 	const diseases = [
 		{
@@ -27,10 +26,6 @@
 			date: '2021-01-01'
 		}
 	];
-
-	onMount(() => {
-		console.log('Patient vaccines');
-	});
 
 	function formatDate(date: string) {
 		return new Date(date).toLocaleDateString();

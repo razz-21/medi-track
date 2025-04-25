@@ -16,10 +16,10 @@
 	import { loginUserHandler } from '$lib/handler/login/login-user.handler';
 	import { AUTH_STORAGE_KEY } from '$lib/models/common/constants';
 	import { userStore } from '$lib/store/user.store';
-	import { onMount } from 'svelte';
-	import type { User } from '$lib/models/user/user.type';
+	import { Routes } from '$lib/models/navigation/routes';
+	// import type { User } from '$lib/models/user/user.type';
 
-	let { data }: { data: { user: User } } = $props();
+	// let { data }: { data: { user: User } } = $props();
 
 	let form = $state<AuthLogin>({
 		username: '',
@@ -28,19 +28,15 @@
 	let loading = $state(false);
 	let errorMessage = $state<ErrorMessage | null>(null);
 
-	onMount(() => {
-		console.log(data);
-	});
-
 	async function handleLogin() {
 		loading = true;
 
 		try {
 			const result = await loginUserHandler(form);
 			localStorage.setItem(AUTH_STORAGE_KEY, result.accessToken);
-			userStore.set(result.user);
+			$userStore = result.user;
 
-			goto('/app');
+			goto(Routes.Dashboard);
 		} catch (error) {
 			if (error instanceof Error) {
 				errorMessage = {

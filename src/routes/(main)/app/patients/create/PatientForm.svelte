@@ -265,9 +265,7 @@
 							<Calendar
 								type="single"
 								bind:value={dateOfBirthValue}
-								onValueChange={(value) => {
-									handleBlur('date_of_birth');
-								}}
+								onValueChange={() => handleBlur('date_of_birth')}
 							/>
 						</Popover.Content>
 					</Popover.Root>
@@ -405,13 +403,13 @@
 	</div>
 
 	<div class="mt-10 flex justify-end gap-2">
-		<Button variant="outline" on:click={handleBack}>
+		<Button variant="outline" size="sm" on:click={handleBack}>
 			<div class="flex items-center gap-1">
 				<ArrowLeft class="w-4 h-4" />
 				{negativeButtonLabel}
 			</div>
 		</Button>
-		<Button disabled={formInvalid || loading} on:click={handleSubmit}>
+		<Button disabled={formInvalid || loading} size="sm" on:click={handleSubmit}>
 			<div class="flex items-center gap-1">
 				{#if loading}
 					<Loader2 class="w-4 h-4 animate-spin" />

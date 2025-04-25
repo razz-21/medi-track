@@ -5,6 +5,10 @@
 	type Props = {
 		loading?: boolean;
 		reports: VaccineReportGetTable['reports'];
+		page: number;
+		limit: number;
+		total: number;
+		pageChange: (page: number) => void;
 	};
 </script>
 
@@ -22,8 +26,41 @@
 	import { goto } from '$app/navigation';
 	import type { VaccineReportGetTable } from '$lib/models/vaccine/vaccine.schema';
 	import { format } from 'date-fns';
+	import { Button } from '$lib/components/ui/button';
+	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 
-	const { loading = $bindable(false), reports = [] }: Props = $props();
+	const {
+		loading = $bindable(false),
+		page = $bindable(1),
+		limit = $bindable(10),
+		total = $bindable(0),
+		reports = $bindable([]),
+		pageChange
+	}: Props = $props();
+
+	let pageIndex = $state(1);
+	let pageCount = $state(10);
+	let hasPreviousPage = $state(true);
+	let hasNextPage = $state(true);
+
+	$effect(() => {
+		pageIndex = page;
+		pageCount = Math.ceil(total / limit);
+		hasPreviousPage = pageIndex > 1;
+		hasNextPage = pageIndex < pageCount;
+	});
+
+	function handlePreviousPage() {
+		handlePageChange(page - 1);
+	}
+
+	function handleNextPage() {
+		handlePageChange(page + 1);
+	}
+
+	function handlePageChange(page: number) {
+		pageChange(page);
+	}
 </script>
 
 <div class="rounded-md border">
@@ -93,3 +130,24 @@
 		</TableBody>
 	</Table>
 </div>
+
+{#if !loading}
+	<div class="flex justify-between items-center gap-4">
+		<div class="ml-2">
+			<p class="text-xs font-bold">Page {page} of {pageCount}</p>
+		</div>
+		<div class="flex items-center justify-end space-x-2 py-2">
+			<Button
+				variant="outline"
+				size="sm"
+				on:click={() => handlePreviousPage()}
+				disabled={!hasPreviousPage}
+			>
+				<ChevronLeft class="w-3 h-3" />
+			</Button>
+			<Button variant="outline" size="sm" disabled={!hasNextPage} on:click={() => handleNextPage()}>
+				<ChevronRight class="w-3 h-3" />
+			</Button>
+		</div>
+	</div>
+{/if}

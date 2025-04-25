@@ -53,7 +53,7 @@
 	}
 
 	function handleDeletePatient(patient: PatientGetTable['patients'][0]) {
-		console.log(patient);
+		console.log('Delete patient');
 	}
 
 	function handleCreatePatient() {

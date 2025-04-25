@@ -84,7 +84,7 @@
 			</div>
 		</div>
 	</div>
-	{#each vaccineReport.details ?? [] as detail, index}
+	{#each vaccineReport.details ?? [] as detail}
 		<div class="relative border border-dashed border-gray-300 rounded-lg p-4">
 			<div class="absolute top-2 right-2">
 				<AlertDialog bind:open={deleteRecordAlertDialogOpen}>

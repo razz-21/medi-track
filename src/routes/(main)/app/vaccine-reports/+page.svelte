@@ -45,6 +45,11 @@
 	const searchVaccineReports = debounce(() => {
 		fetchVaccineReportsTable();
 	}, 300);
+
+	function handlePageChange(page: number) {
+		page = page;
+		fetchVaccineReportsTable();
+	}
 </script>
 
 <div class="max-w-[1440px]">
@@ -82,6 +87,13 @@
 				/>
 			</div>
 		</div>
-		<VaccineReportDataTable loading={loadingTable} reports={vaccineReports} />
+		<VaccineReportDataTable
+			bind:loading={loadingTable}
+			bind:page
+			bind:limit
+			bind:total
+			reports={vaccineReports}
+			pageChange={handlePageChange}
+		/>
 	</div>
 </div>

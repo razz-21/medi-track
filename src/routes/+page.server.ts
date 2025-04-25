@@ -4,7 +4,6 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = locals.user as User;
-	// console.log('User', user);
 	if (!user) {
 		throw redirect(302, '/login');
 	}

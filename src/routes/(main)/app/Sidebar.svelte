@@ -1,19 +1,16 @@
 <script lang="ts">
-	import {
-		User,
-		Users,
-		LogOut,
-		ChartArea,
-		UserRoundPlus,
-		ClipboardMinus,
-		Syringe,
-		Dna
-	} from '@lucide/svelte';
+	import { User, Users, LogOut, ChartArea, UserRoundPlus, Syringe, Dna } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { Routes } from '$lib/models/navigation/routes';
 	import { page } from '$app/stores';
 	import { logoutUserHandler } from '$lib/handler/login/logout-user.handler';
+	import { userStore } from '$lib/store/user.store';
+
+	let user = $userStore;
+	let userFirstNameLetter = $derived(user?.firstname?.[0]);
 	let activeRoute = $derived($page.url.pathname);
+
+	$inspect(user);
 
 	function navigate(path: string) {
 		goto(path);
@@ -27,9 +24,9 @@
 <div class="sidebar-container">
 	<div class="sidebar-user">
 		<div class="sidebar-user-avatar">
-			<span class="text-white text-xs font-bold">T</span>
+			<span class="text-white text-xs font-bold">{userFirstNameLetter}</span>
 		</div>
-		<span class="text-xs font-bold">Ernesto Razo</span>
+		<span class="text-xs font-bold">{user?.firstname} {user?.lastname}</span>
 	</div>
 
 	<div class="sidebar-navigation">
