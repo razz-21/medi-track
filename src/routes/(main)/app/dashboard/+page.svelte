@@ -70,6 +70,8 @@
 	let dashboardStatsVaccineDisease = $derived(
 		dashboardStats?.vaccine_disease_stats ?? { vaccinated: 0, diseased: 0 }
 	);
+	let dashboardStatsVaccineBrgy = $derived(dashboardStats?.vaccined_brgy_stats ?? []);
+	let dashboardStatsDiseaseBrgy = $derived(dashboardStats?.diseased_brgy_stats ?? []);
 
 	let percentageFromDate: DateValue = $state(
 		parseDate(format(startOfYear(new Date()), 'yyyy-MM-dd'))
@@ -220,6 +222,7 @@
 										!percentageFromDate && 'text-muted-foreground'
 									)}
 									builders={[builder]}
+									disabled={dashboardStatsLoading}
 								>
 									<CalendarIcon class="mr-2 h-4 w-4" />
 									{percentageFromDate
@@ -241,6 +244,7 @@
 										!percentageToDate && 'text-muted-foreground'
 									)}
 									builders={[builder]}
+									disabled={dashboardStatsLoading}
 								>
 									<CalendarIcon class="mr-2 h-4 w-4" />
 									{percentageToDate ? df.format(percentageToDate.toDate(getLocalTimeZone())) : 'To'}
@@ -274,10 +278,10 @@
 
 				<div class="flex gap-4">
 					<div class="w-1/2">
-						<DiseasePerBaranggayChart />
+						<DiseasePerBaranggayChart diseasedBrgyStats={dashboardStatsDiseaseBrgy} />
 					</div>
 					<div class="w-1/2">
-						<VaccinesPerBaranggayChart />
+						<VaccinesPerBaranggayChart vaccinedBrgyStats={dashboardStatsVaccineBrgy} />
 					</div>
 				</div>
 			</div>

@@ -9,3 +9,21 @@ export enum GenderEnum {
 }
 
 export type Gender = (typeof GenderEnum)[keyof typeof GenderEnum];
+
+export enum BaranggayEnum {
+	Poblacion = 'Poblacion',
+	Sinaloc = 'Sinaloc',
+	Bolisong = 'Bolisong',
+	PedroSaBaculio = 'PSB',
+	Molugan = 'Molugan',
+	Quibonbon = 'Quibonbon',
+	Sambulawan = 'Sambulawan',
+	Ulaliman = 'Ulaliman',
+	Kalabaylabay = 'Kalabaylabay',
+	Amoros = 'Amoros',
+	Taytay = 'Taytay',
+	Hinigdaan = 'Hinigdaan',
+	Himaya = 'Himaya',
+	Cogon = 'Cogon',
+	Others = 'Others'
+}

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { VaccineTypeEnum } from '../vaccine/vaccine.type';
 import { DiseaseTypeEnum } from '../disease/disease.type';
+import { BaranggayEnum } from '../common/common.types';
 export const DashboardSchema = z.object({
 	totalPatients: z.number(),
 	totalDiseaseReports: z.number(),
@@ -53,7 +54,19 @@ export const DashboardStatsSchema = z.object({
 	vaccine_disease_stats: z.object({
 		vaccinated: z.number(),
 		diseased: z.number()
-	})
+	}),
+	vaccined_brgy_stats: z.array(
+		z.object({
+			brgy: z.nativeEnum(BaranggayEnum),
+			value: z.number()
+		})
+	),
+	diseased_brgy_stats: z.array(
+		z.object({
+			brgy: z.nativeEnum(BaranggayEnum),
+			value: z.number()
+		})
+	)
 });
 
 export const DashboardStatsGetSchema = DashboardStatsSchema;

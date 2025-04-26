@@ -91,6 +91,11 @@
 			options: options
 		});
 	});
+
+	$effect(() => {
+		chart.data = data();
+		chart.update('show');
+	});
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">
