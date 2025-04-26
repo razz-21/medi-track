@@ -117,6 +117,18 @@
 		}
 	}
 
+	function handleDatedFromChange(date: DateValue | undefined) {
+		if (!date) return;
+		percentageFromDate = date;
+		fetchDashboardStats();
+	}
+
+	function handleDatedToChange(date: DateValue | undefined) {
+		if (!date) return;
+		percentageToDate = date;
+		fetchDashboardStats();
+	}
+
 	async function handleYearChange(yearSelection: number) {
 		loadingDashboard = true;
 		year = yearSelection;
@@ -231,7 +243,10 @@
 								</Button>
 							</Popover.Trigger>
 							<Popover.Content class="w-auto p-0" align="start">
-								<Calendar bind:value={percentageFromDate} onValueChange={fetchDashboardStats} />
+								<Calendar
+									bind:value={percentageFromDate}
+									onValueChange={(value) => handleDatedFromChange(value)}
+								/>
 							</Popover.Content>
 						</Popover.Root>
 						<span>-</span>
@@ -255,7 +270,7 @@
 									bind:value={percentageToDate}
 									minValue={percentageFromDate}
 									maxValue={today}
-									onValueChange={fetchDashboardStats}
+									onValueChange={(value) => handleDatedToChange(value)}
 								/>
 							</Popover.Content>
 						</Popover.Root>
