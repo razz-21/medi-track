@@ -98,4 +98,25 @@
 			</div>
 		</form>
 	</div>
+
+	<div class="p-2 bg-gray-100 rounded-b-lg pt-2 -mt-2 w-full max-w-[30rem] z-10">
+		<div class="flex justify-end gap-2">
+			<Button
+				variant="link"
+				size="sm"
+				class="text-gray-500 cursor-pointer"
+				on:click={() => goto(Routes.SiteVaccine)}
+			>
+				Vaccine site
+			</Button>
+			<Button
+				variant="link"
+				size="sm"
+				class="text-gray-500 cursor-pointer"
+				on:click={() => goto(Routes.SiteDisease)}
+			>
+				Disease site
+			</Button>
+		</div>
+	</div>
 </div>
