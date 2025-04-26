@@ -17,7 +17,7 @@
 	.main-container {
 		@apply bg-white w-full m-2 p-6 rounded-lg border-gray-200 border;
 
-		margin-left: 240px;
+		margin-left: 280px;
 		min-height: calc(100vh - 1rem);
 	}
 </style>

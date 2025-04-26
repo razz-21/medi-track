@@ -1,50 +1,63 @@
-<script lang="ts">
-	const generateRandomPercentages = (count: number) => {
-		const numbers = Array.from({ length: count }, () => Math.random());
-		const sum = numbers.reduce((a, b) => a + b, 0);
-		return numbers.map((n) => Math.round((n / sum) * 100));
+<script lang="ts" module>
+	import type { DashboardStatsGet } from '$lib/models/dashboard/dashboard.schema';
+	import { BaranggayEnum } from '$lib/models/common/common.types';
+	type Props = {
+		diseasedBrgyStats: DashboardStatsGet['diseased_brgy_stats'];
 	};
+</script>
 
-	const percentages = generateRandomPercentages(14);
+<script lang="ts">
+	let { diseasedBrgyStats }: Props = $props();
 
-	const baranggays = [
-		{ name: 'Poblacion', percentage: percentages[0] },
-		{ name: 'Sinaloc', percentage: percentages[1] },
-		{ name: 'PSB', percentage: percentages[2] },
-		{ name: 'Taytay', percentage: percentages[3] },
-		{ name: 'Amoros', percentage: percentages[4] },
-		{ name: 'Molugan', percentage: percentages[5] },
-		{ name: 'Cogon', percentage: percentages[6] },
-		{ name: 'Himaya', percentage: percentages[7] },
-		{ name: 'Ulaliman', percentage: percentages[8] },
-		{ name: 'Quibonbon', percentage: percentages[9] },
-		{ name: 'Kalabaylabay', percentage: percentages[10] },
-		{ name: 'Hinigdaan', percentage: percentages[11] },
-		{ name: 'Bolisong', percentage: percentages[12] },
-		{ name: 'Sambulawan', percentage: percentages[13] }
-	];
+	let brgys = $derived(Object.values(BaranggayEnum));
 
-	const sortedBaranggays = baranggays.sort((a, b) => b.percentage - a.percentage);
+	let data = $derived(() => {
+		const dataPerBrgy: { name: string; value: number }[] = [];
+
+		brgys.forEach((brgy) => {
+			const brgyData = diseasedBrgyStats.find((brgyData) => brgyData.brgy === brgy);
+
+			if (brgyData) {
+				dataPerBrgy.push({
+					name: brgyData.brgy,
+					value: brgyData.value
+				});
+			} else {
+				dataPerBrgy.push({
+					name: brgy,
+					value: 0
+				});
+			}
+		});
+
+		return dataPerBrgy.sort((a, b) => {
+			if (a.name === 'Others') return 1;
+			if (b.name === 'Others') return -1;
+			return a.name.localeCompare(b.name);
+		});
+	});
+
+	$inspect(data());
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">
-	<h3 class="text-sm font-bold">Patient with diseases per baranggay</h3>
+	<h3 class="text-sm font-bold">Diseased per brgy</h3>
 
 	<div class="flex items-center justify-between mt-4">
 		<div class="flex flex-col gap-2 w-full">
-			{#each sortedBaranggays as baranggay (baranggay.name)}
+			{#each data() as item, index}
+				{@const isLast = index === data().length - 1}
 				<div class="flex flex-col gap-2">
 					<div class="flex items-center justify-between gap-1">
-						<div class="text-xs">{baranggay.name}</div>
-						<div class="text-xs">{baranggay.percentage}%</div>
+						<div class="flex items-center gap-1 text-sm">
+							<div class="w-3 h-3 bg-green-400 rounded-sm"></div>
+							<div>{item.name}</div>
+						</div>
+						<div class="text-sm font-medium">{item.value}</div>
 					</div>
-
-					<div class="h-3 bg-gray-100 rounded-full">
-						<div
-							class="h-3 bg-green-400 rounded-full"
-							style="width: {baranggay.percentage}%;"
-						></div>
-					</div>
+					{#if !isLast}
+						<hr />
+					{/if}
 				</div>
 			{/each}
 		</div>

@@ -1,4 +1,6 @@
-<script lang="ts">
+<script lang="ts" module>
+	import type { DashboardStatsGet } from '$lib/models/dashboard/dashboard.schema';
+	import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
 	import {
 		BarController,
 		BarElement,
@@ -7,10 +9,28 @@
 		LinearScale,
 		TimeScale,
 		Tooltip,
+		type ChartDataset,
 		type ChartOptions
 	} from 'chart.js';
 	import 'chart.js/auto';
 	import { onMount } from 'svelte';
+
+	type Props = {
+		dashboardStats: DashboardStatsGet['disease_stats'];
+	};
+</script>
+
+<script lang="ts">
+	let { dashboardStats }: Props = $props();
+
+	let diseaseTypes = $derived(Object.values(DiseaseTypeEnum));
+	let diseaseTypesColor = $state({
+		[DiseaseTypeEnum.Dengue]: 'rgb(56, 189, 248)',
+		[DiseaseTypeEnum.Flu]: 'rgb(74, 222, 128)',
+		[DiseaseTypeEnum.HIV]: 'rgb(251, 191, 36)',
+		[DiseaseTypeEnum.Influenza]: 'rgb(248, 113, 113)',
+		[DiseaseTypeEnum.TB]: 'rgb(167, 139, 250)'
+	});
 
 	const options: ChartOptions = {
 		scales: {
@@ -29,20 +49,34 @@
 		maintainAspectRatio: false
 	};
 
-	const data = {
-		labels: ['Covid', 'HIV', 'Tuberculosis'],
-		datasets: [
+	let data = $derived(() => {
+		const labels = diseaseTypes;
+		const datasets: ChartDataset[] = [
 			{
-				data: [12, 19, 3],
-				backgroundColor: [
-					'rgba(59, 130, 246, 1)',
-					'rgba(232, 121, 249, 1)',
-					'rgba(253, 224, 71, 1)'
-				],
+				data: [],
+				backgroundColor: [],
 				borderRadius: 8
 			}
-		]
-	};
+		];
+
+		diseaseTypes.forEach((diseaseType) => {
+			const diseaseDataset = dashboardStats.find((stat) => stat.type === diseaseType);
+			if (diseaseDataset) {
+				(datasets[0].data as number[]).push(diseaseDataset.value ?? 0);
+			} else {
+				(datasets[0].data as number[]).push(0);
+			}
+
+			(datasets[0].backgroundColor as string[]).push(diseaseTypesColor[diseaseType]);
+		});
+
+		return {
+			labels: labels,
+			datasets: datasets
+		};
+	});
+
+	let datasets = $derived(data().datasets);
 
 	let canvasElement: HTMLCanvasElement;
 	let chart: Chart;
@@ -52,30 +86,30 @@
 	onMount(() => {
 		chart = new Chart(canvasElement, {
 			type: 'doughnut',
-			data: data,
+			data: data(),
 			options: options
 		});
+	});
+
+	$effect(() => {
+		chart.data = data();
+		chart.update('show');
 	});
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">
-	<h3 class="text-sm font-bold">Diseases percentage</h3>
-	<div class="flex items-center justify-between">
+	<h3 class="text-sm font-bold">Diseases stats</h3>
+	<div class="flex items-center justify-between mt-2">
 		<div class="flex flex-col gap-2">
-			<div class="flex items-center gap-2 text-xs">
-				<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-				<span>Covid - <strong>12%</strong></span>
-			</div>
-
-			<div class="flex items-center gap-2 text-xs">
-				<div class="w-2 h-2 bg-purple-500 rounded-full"></div>
-				<span>HIV - <strong>19%</strong></span>
-			</div>
-
-			<div class="flex items-center gap-2 text-xs">
-				<div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-				<span>Tuberculosis - <strong>3%</strong></span>
-			</div>
+			{#each datasets[0]?.data ?? [] as data, index}
+				<div class="flex items-center gap-2 text-xs">
+					<div
+						class="w-2 h-2 rounded-full"
+						style="background-color: {(datasets[0]?.backgroundColor as string[])?.[index]}"
+					></div>
+					<span>{diseaseTypes[index]} - <strong>{data}%</strong></span>
+				</div>
+			{/each}
 		</div>
 		<div>
 			<canvas bind:this={canvasElement}></canvas>

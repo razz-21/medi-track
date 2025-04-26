@@ -10,8 +10,6 @@
 	let userFirstNameLetter = $derived(user?.firstname?.[0]);
 	let activeRoute = $derived($page.url.pathname);
 
-	$inspect(user);
-
 	function navigate(path: string) {
 		goto(path);
 	}
@@ -116,7 +114,7 @@
 	@reference 'tailwindcss';
 
 	.sidebar-container {
-		@apply flex flex-col h-full p-4 fixed top-0 left-0 w-[240px];
+		@apply flex flex-col h-full p-4 fixed top-0 left-0 w-[280px];
 	}
 
 	.sidebar-user {
@@ -136,7 +134,7 @@
 	}
 
 	.sidebar-navigation-item.active {
-		@apply bg-green-100;
+		@apply bg-green-200 font-bold text-green-900;
 	}
 
 	.sidebar-footer {
