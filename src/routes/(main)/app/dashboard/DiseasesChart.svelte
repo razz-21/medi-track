@@ -115,6 +115,13 @@
 			options: options
 		});
 	});
+
+	$effect(() => {
+		if (chart && disease_datasets) {
+			chart.data = data();
+			chart.update('show');
+		}
+	});
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">

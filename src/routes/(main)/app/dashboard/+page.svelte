@@ -20,7 +20,6 @@
 	import VaccinesPerBaranggayChart from './VaccinesPerBaranggayChart.svelte';
 	import VaccinesDiseasePercentageChart from './VaccinesDiseasePercentageChart.svelte';
 	import {
-		CalendarDate,
 		DateFormatter,
 		getLocalTimeZone,
 		parseDate,
@@ -37,6 +36,14 @@
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 	import { getDashboardStatsHandler } from '$lib/handler/dashboard/get-dashboard-stats.handler';
 	import { format, startOfYear } from 'date-fns';
+	import { Separator } from '$lib/components/ui/separator';
+	import {
+		DropdownMenu,
+		DropdownMenuContent,
+		DropdownMenuItem,
+		DropdownMenuTrigger
+	} from '$lib/components/ui/dropdown-menu';
+	import DropdownMenuCheckboxItem from '$lib/components/ui/dropdown-menu/dropdown-menu-checkbox-item.svelte';
 
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
@@ -51,6 +58,10 @@
 	let totalUsers = $derived(dashboard?.totalUsers ?? 0);
 	let vaccineDatasets = $derived(dashboard?.vaccine_datasets ?? []);
 	let diseaseDatasets = $derived(dashboard?.disease_datasets ?? []);
+	let startingYear = $state(new Date().getFullYear() - 2);
+	let year = $state(new Date().getFullYear());
+	let yearSelectionList = $derived(Array.from({ length: 5 }, (_, i) => startingYear + i));
+	let loadingDashboard = $state(false);
 
 	let dashboardStats = $state<DashboardStatsGet | null>(null);
 	let dashboardStatsLoading = $state(true);
@@ -77,7 +88,10 @@
 
 	async function fetchDashboard() {
 		try {
-			const result = await getDashboardHandler();
+			const result = await getDashboardHandler({
+				year: year.toString()
+			});
+
 			dashboard = result;
 		} catch (error) {
 			toast.error('Failed to fetch dashboard');
@@ -99,6 +113,13 @@
 		} finally {
 			dashboardStatsLoading = false;
 		}
+	}
+
+	async function handleYearChange(yearSelection: number) {
+		loadingDashboard = true;
+		year = yearSelection;
+		await fetchDashboard();
+		loadingDashboard = false;
 	}
 </script>
 
@@ -157,6 +178,34 @@
 			</div>
 
 			<div class="flex flex-col gap-4 max-w-[1440px]">
+				<div class="flex">
+					<DropdownMenu>
+						<DropdownMenuTrigger>
+							<div
+								class="flex items-center gap-2 border border-dashed border-slate-300 rounded-lg py-1 px-2 hover:bg-slate-100 cursor-pointer"
+							>
+								<CalendarIcon class="w-4 h-4" />
+								<span class="text-xs">Year</span>
+								{#if year}
+									<Separator orientation="vertical" class="h-6" />
+									<div class="bg-slate-100 rounded-lg p-1 px-2 text-xs">{year}</div>
+								{/if}
+								{#if loadingDashboard}
+									<Loader2 class="w-4 h-4 text-slate-500 animate-spin" />
+								{/if}
+							</div>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							{#each yearSelectionList as selectionYear}
+								<DropdownMenuCheckboxItem
+									checked={year === selectionYear}
+									onCheckedChange={() => handleYearChange(selectionYear)}
+									>{selectionYear}</DropdownMenuCheckboxItem
+								>
+							{/each}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 				<VaccinesChart vaccine_datasets={vaccineDatasets} />
 				<DiseasesChart disease_datasets={diseaseDatasets} />
 
