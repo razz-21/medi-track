@@ -124,6 +124,13 @@
 	let touched: Record<string, boolean> = $state({});
 	let formInvalid = $derived(Object.values(formErrors).some((errors) => errors.length > 0));
 
+	let roleSelection = $derived(
+		Object.values(UserTypeEnum).map((role) => ({
+			label: role,
+			value: role
+		}))
+	);
+
 	let roleInitialSelected = $state<{ label: string; value: UserType }>({
 		label: 'Encoder',
 		value: UserTypeEnum.Encoder

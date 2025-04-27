@@ -253,7 +253,7 @@
 			</div>
 		</div>
 
-		{#if !loading}
+		{#if !loading && false}
 			<div class="flex gap-4">
 				<div class="w-1/2">
 					<PatientVaccinesTable />

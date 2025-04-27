@@ -376,7 +376,11 @@
 
 			<div class="flex gap-4">
 				<div class="w-full flex flex-col gap-2">
-					<Label class="text-xs">Address <span class="text-red-500">*</span></Label>
+					<Label class="text-xs"
+						>Address <span class="text-red-500">*</span>
+						<span class="text-muted-foreground">(zone, street, barangay, city, province)</span
+						></Label
+					>
 					<Input
 						name="address"
 						onblur={() => handleBlur('address')}

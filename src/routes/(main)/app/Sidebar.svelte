@@ -91,7 +91,14 @@
 
 	<div class="sidebar-footer">
 		<div class="sidebar-navigation">
-			<div class="sidebar-navigation-item">
+			<div
+				role="button"
+				tabindex="0"
+				class="sidebar-navigation-item"
+				class:active={activeRoute.includes(Routes.Profile)}
+				onclick={() => navigate(Routes.Profile)}
+				onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Profile)}
+			>
 				<User class="w-4 h-4" />
 				<span>Profile</span>
 			</div>
