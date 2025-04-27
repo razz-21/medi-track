@@ -4,7 +4,8 @@
 	import { VaccineTypeEnum } from '$lib/models/vaccine/vaccine.type';
 	import type { VaccineSite } from '$lib/models/vaccine/vaccine.schema';
 	import { toast } from 'svelte-sonner';
-	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 
 	type Props = {
 		data: {
@@ -17,13 +18,18 @@
 	let { data }: Props = $props();
 
 	let stats = $derived(data.stats);
+	let toastId = $state<string | number | undefined>(undefined);
 
 	beforeNavigate(() => {
-		toast.info('Redirecting to site. Please wait...');
+		toastId = toast.info('Redirecting to site. Please wait...');
 	});
 
 	afterNavigate(() => {
-		toast.dismiss();
+		toast.dismiss(toastId);
+	});
+
+	onDestroy(() => {
+		toast.dismiss(toastId);
 	});
 
 	function handleExplore() {
@@ -71,7 +77,7 @@
 			<div class="relative w-full sm:w-1/2 flex flex-col items-end">
 				<div class="absolute bottom-[-17rem] sm:bottom-[-25rem] right-0">
 					<img
-						src="/images/doctor_female.png"
+						src="/images/doctor_male.png"
 						alt="Disease Dashboard"
 						class="w-full h-full max-w-[20rem] max-h-[30rem] sm:max-w-[30rem] sm:max-h-[42rem] object-cover"
 					/>

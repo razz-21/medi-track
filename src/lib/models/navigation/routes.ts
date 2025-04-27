@@ -1,4 +1,5 @@
 export enum Routes {
+	Base = '/',
 	Login = '/login',
 	LoginApi = '/api/login',
 	App = '/app',
