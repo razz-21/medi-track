@@ -15,7 +15,16 @@ export enum Routes {
 	DiseaseReportsCreate = '/app/disease-reports/create',
 	DiseaseReportsApi = '/api/disease/reports',
 	Users = '/app/users',
-	UsersCreate = '/app/users/create'
+	UsersCreate = '/app/users/create',
+	SiteDisease = '/site/disease',
+	SiteVaccine = '/site/vaccine'
 }
 
-export const PUBLIC_ROUTES = ['/', Routes.App, Routes.Login, Routes.LoginApi];
+export const PUBLIC_ROUTES = [
+	'/',
+	Routes.App,
+	Routes.Login,
+	Routes.LoginApi,
+	Routes.SiteDisease,
+	Routes.SiteVaccine
+];
