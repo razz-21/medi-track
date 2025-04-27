@@ -1,49 +1,41 @@
 import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
-import type { PageServerLoad } from './$types';
+import type { RequestHandler } from './$types';
 import { diseaseReportsCollection } from '$lib/server/mongo/collections/diseases.collection';
-import { error } from '@sveltejs/kit';
-import { VaccineTypeEnum } from '$lib/models/vaccine/vaccine.type';
-import { vaccineReportsCollection } from '$lib/server/mongo/collections/vaccines.collection';
+import { json } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async () => {
+export const GET: RequestHandler = async ({ url }) => {
 	const currentYear = new Date().getFullYear();
 	const currentMonth = new Date().getMonth();
 	const currentDate = new Date();
 
 	try {
 		const stats = {
-			cases_stats: [] as { type: VaccineTypeEnum; count: number }[],
-			[VaccineTypeEnum.BCG]: {
+			cases_stats: [] as { type: DiseaseTypeEnum; count: number }[],
+			[DiseaseTypeEnum.Covid19]: {
 				total_cases: 0,
 				total_cases_year: 0,
 				total_cases_month: 0,
 				total_cases_week: 0
 			},
-			[VaccineTypeEnum.HepaB1]: {
+			[DiseaseTypeEnum.Dengue]: {
 				total_cases: 0,
 				total_cases_year: 0,
 				total_cases_month: 0,
 				total_cases_week: 0
 			},
-			[VaccineTypeEnum.Polio]: {
+			[DiseaseTypeEnum.Influenza]: {
 				total_cases: 0,
 				total_cases_year: 0,
 				total_cases_month: 0,
 				total_cases_week: 0
 			},
-			[VaccineTypeEnum.PCV]: {
+			[DiseaseTypeEnum.TB]: {
 				total_cases: 0,
 				total_cases_year: 0,
 				total_cases_month: 0,
 				total_cases_week: 0
 			},
-			[VaccineTypeEnum.MMR]: {
-				total_cases: 0,
-				total_cases_year: 0,
-				total_cases_month: 0,
-				total_cases_week: 0
-			},
-			[VaccineTypeEnum.Covid19]: {
+			[DiseaseTypeEnum.HIV]: {
 				total_cases: 0,
 				total_cases_year: 0,
 				total_cases_month: 0,
@@ -51,31 +43,28 @@ export const load: PageServerLoad = async () => {
 			}
 		};
 
-		for (const vaccineType of Object.values(VaccineTypeEnum)) {
-			const totalCases = await vaccineReportsCollection.countDocuments({ type: vaccineType });
-
-			// For COVID-19, use details[0].date
-			// For others, use details[0].immunization_date
-			const dateField =
-				vaccineType === VaccineTypeEnum.Covid19 ? 'details.0.date' : 'details.0.immunization_date';
-
-			const yearCases = await vaccineReportsCollection.countDocuments({
-				type: vaccineType,
-				[dateField]: {
+		// Get total cases for each disease type
+		for (const diseaseType of Object.values(DiseaseTypeEnum)) {
+			const totalCases = await diseaseReportsCollection.countDocuments({
+				disease_type: diseaseType
+			});
+			const yearCases = await diseaseReportsCollection.countDocuments({
+				disease_type: diseaseType,
+				date_reported: {
 					$gte: new Date(currentYear, 0, 1).toISOString(),
 					$lt: new Date(currentYear + 1, 0, 1).toISOString()
 				}
 			});
-			const monthCases = await vaccineReportsCollection.countDocuments({
-				type: vaccineType,
-				[dateField]: {
+			const monthCases = await diseaseReportsCollection.countDocuments({
+				disease_type: diseaseType,
+				date_reported: {
 					$gte: new Date(currentYear, currentMonth, 1).toISOString(),
 					$lt: new Date(currentYear, currentMonth + 1, 1).toISOString()
 				}
 			});
-			const weekCases = await vaccineReportsCollection.countDocuments({
-				type: vaccineType,
-				[dateField]: {
+			const weekCases = await diseaseReportsCollection.countDocuments({
+				disease_type: diseaseType,
+				date_reported: {
 					$gte: new Date(
 						currentDate.getTime() - currentDate.getDay() * 24 * 60 * 60 * 1000
 					).toISOString(),
@@ -85,7 +74,7 @@ export const load: PageServerLoad = async () => {
 				}
 			});
 
-			stats[vaccineType] = {
+			stats[diseaseType] = {
 				total_cases: totalCases,
 				total_cases_year: yearCases,
 				total_cases_month: monthCases,
@@ -93,15 +82,13 @@ export const load: PageServerLoad = async () => {
 			};
 
 			stats.cases_stats.push({
-				type: vaccineType,
+				type: diseaseType,
 				count: totalCases
 			});
 		}
 
-		return {
-			stats
-		};
-	} catch (e) {
-		return error(500, { message: 'Failed to get vaccine site stats' });
+		return json(stats);
+	} catch (error) {
+		return json({ error: 'Failed to get disease site stats' }, { status: 500 });
 	}
 };

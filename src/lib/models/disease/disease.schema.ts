@@ -53,9 +53,50 @@ export const DiseaseReportPatchSchema = DiseaseReportSchema.omit({
 	updated_at: true
 }).partial();
 
+export const DiseaseSiteSchema = z.object({
+	cases_stats: z
+		.object({
+			type: z.nativeEnum(DiseaseTypeEnum),
+			count: z.number()
+		})
+		.partial()
+		.array(),
+	[DiseaseTypeEnum.Covid19]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[DiseaseTypeEnum.Dengue]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[DiseaseTypeEnum.Influenza]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[DiseaseTypeEnum.TB]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[DiseaseTypeEnum.HIV]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	})
+});
+
 export type DiseaseReport = z.infer<typeof DiseaseReportSchema>;
 export type DiseaseReportGet = z.infer<typeof DiseaseReportGetSchema>;
 export type DiseaseReportPost = z.infer<typeof DiseaseReportPostSchema>;
 export type DiseaseReportPatch = z.infer<typeof DiseaseReportPatchSchema>;
 export type DiseaseReportTable = z.infer<typeof DiseaseReportTableSchema>;
 export type DiseaseReportTableParams = z.infer<typeof DiseaseReportTableParamsSchema>;
+export type DiseaseSite = z.infer<typeof DiseaseSiteSchema>;

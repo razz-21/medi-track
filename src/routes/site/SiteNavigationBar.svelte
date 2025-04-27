@@ -17,7 +17,7 @@
 	}
 </script>
 
-<div class="fixed top-0 left-0 ] w-screen">
+<div class="fixed top-0 left-0 ] w-screen z-10 bg-white">
 	<div class="max-w-[1200px] mx-auto">
 		<div class="flex items-center justify-between py-2 px-4">
 			<div class="flex items-center gap-3">

@@ -84,6 +84,52 @@ export const VaccineReportPatchSchema = VaccineReportSchema.omit({
 	updated_at: true
 }).partial();
 
+export const VaccineSiteSchema = z.object({
+	cases_stats: z
+		.object({
+			type: z.nativeEnum(VaccineTypeEnum),
+			count: z.number()
+		})
+		.partial()
+		.array(),
+	[VaccineTypeEnum.BCG]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[VaccineTypeEnum.HepaB1]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[VaccineTypeEnum.Polio]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[VaccineTypeEnum.PCV]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[VaccineTypeEnum.MMR]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	}),
+	[VaccineTypeEnum.Covid19]: z.object({
+		total_cases: z.number(),
+		total_cases_year: z.number(),
+		total_cases_month: z.number(),
+		total_cases_week: z.number()
+	})
+});
+
 export type VaccineReport = z.infer<typeof VaccineReportSchema>;
 export type VaccineBaseDetails = z.infer<typeof VaccineBaseDetailsSchema>;
 export type VaccineBaseDetailsArray = z.infer<typeof VaccineBaseDetailsArraySchema>;
@@ -94,3 +140,4 @@ export type VaccineReportsTableParams = z.infer<typeof VaccineReportGetTablePara
 export type VaccineReportPost = z.infer<typeof VaccineReportPostSchema>;
 export type VaccineReportGet = z.infer<typeof VaccineReportGetSchema>;
 export type VaccineReportPatch = z.infer<typeof VaccineReportPatchSchema>;
+export type VaccineSite = z.infer<typeof VaccineSiteSchema>;

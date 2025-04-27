@@ -1,11 +1,9 @@
-import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
-import type { PageServerLoad } from './$types';
-import { diseaseReportsCollection } from '$lib/server/mongo/collections/diseases.collection';
-import { error } from '@sveltejs/kit';
 import { VaccineTypeEnum } from '$lib/models/vaccine/vaccine.type';
+import type { RequestHandler } from './$types';
 import { vaccineReportsCollection } from '$lib/server/mongo/collections/vaccines.collection';
+import { json } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async () => {
+export const GET: RequestHandler = async ({ url }) => {
 	const currentYear = new Date().getFullYear();
 	const currentMonth = new Date().getMonth();
 	const currentDate = new Date();
@@ -98,10 +96,8 @@ export const load: PageServerLoad = async () => {
 			});
 		}
 
-		return {
-			stats
-		};
-	} catch (e) {
-		return error(500, { message: 'Failed to get vaccine site stats' });
+		return json(stats);
+	} catch (error) {
+		return json({ error: 'Failed to get vaccine site stats' }, { status: 500 });
 	}
 };
