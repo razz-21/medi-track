@@ -36,8 +36,6 @@
 			return a.name.localeCompare(b.name);
 		});
 	});
-
-	$inspect(data());
 </script>
 
 <div class="w-full border border-gray-200 rounded-lg p-4">

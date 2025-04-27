@@ -39,6 +39,7 @@
 	import { onMount, untrack } from 'svelte';
 	import { z } from 'zod';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import type { Selected } from 'bits-ui';
 
 	export const DiseaseReportForm = z.object({
 		patient_id: z
@@ -126,8 +127,8 @@
 
 	let maleAvatar = 'https://avatar.iran.liara.run/public/21';
 	let femaleAvatar = 'https://avatar.iran.liara.run/public/67';
-	let getAvatar = $derived(() =>
-		selectedPatient?.gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
+	let getAvatar = $derived((gender: GenderEnum) =>
+		gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
 	);
 
 	let diseaseTypes = $derived(() => {
@@ -164,8 +165,56 @@
 		remarks: false
 	});
 
+	const monthOptions = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	].map((month, i) => ({ value: i + 1, label: month }));
+
+	const monthFmt = new DateFormatter('en-US', {
+		month: 'long'
+	});
+
+	const yearFmt = new DateFormatter('en-US', {
+		year: 'numeric'
+	});
+
+	const yearOptions = Array.from({ length: 100 }, (_, i) => ({
+		label: yearFmt.format(new Date(new Date().getFullYear() - i, 0, 1)),
+		value: new Date().getFullYear() - i
+	}));
+
 	const dateFormatter = new DateFormatter('en-US', {
 		dateStyle: 'long'
+	});
+
+	let selectedDateDiagosedMonth = $derived({
+		label: monthFmt.format(selectedDateDiagosed.toDate(getLocalTimeZone())),
+		value: selectedDateDiagosed.month
+	});
+
+	let selectedDateDiagosedYear = $derived({
+		label: yearFmt.format(selectedDateDiagosed.toDate(getLocalTimeZone())),
+		value: selectedDateDiagosed.year
+	});
+
+	let selectedDateReportedMonth = $derived({
+		label: monthFmt.format(selectedDateReported.toDate(getLocalTimeZone())),
+		value: selectedDateReported.month
+	});
+
+	let selectedDateReportedYear = $derived({
+		label: yearFmt.format(selectedDateReported.toDate(getLocalTimeZone())),
+		value: selectedDateReported.year
 	});
 
 	$effect(() => {
@@ -227,6 +276,34 @@
 		}
 	}
 
+	function handleSelectedDateDiagosedMonthChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(selectedDateDiagosedYear.value, v.value - 1, 1, 12, 0, 0));
+		selectedDateDiagosed = parseDate(newDate.toISOString().split('T')[0]);
+		touched.date_diagnosed = true;
+	}
+
+	function handleSelectedDateDiagosedYearChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(v.value, selectedDateDiagosedMonth.value - 1, 1, 12, 0, 0));
+		selectedDateDiagosed = parseDate(newDate.toISOString().split('T')[0]);
+		touched.date_diagnosed = true;
+	}
+
+	function handleSelectedDateReportedMonthChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(selectedDateReportedYear.value, v.value - 1, 1, 12, 0, 0));
+		selectedDateReported = parseDate(newDate.toISOString().split('T')[0]);
+		touched.date_reported = true;
+	}
+
+	function handleSelectedDateReportedYearChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(v.value, selectedDateReportedMonth.value - 1, 1, 12, 0, 0));
+		selectedDateReported = parseDate(newDate.toISOString().split('T')[0]);
+		touched.date_reported = true;
+	}
+
 	function submitForm() {
 		validateForm();
 
@@ -275,7 +352,7 @@
 										<div class="flex items-center gap-2">
 											<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
 												<img
-													src={getAvatar()}
+													src={getAvatar(patient.gender)}
 													alt="Patient avatar"
 													class="w-full h-full object-cover"
 												/>
@@ -305,7 +382,11 @@
 						<div class="flex items-center justify-between gap-2">
 							<div class="flex gap-2">
 								<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
-									<img src={getAvatar()} alt="Patient avatar" class="w-full h-full object-cover" />
+									<img
+										src={getAvatar(selectedPatient.gender)}
+										alt="Patient avatar"
+										class="w-full h-full object-cover"
+									/>
 								</div>
 								<div>{selectedPatient.firstname} {selectedPatient.lastname}</div>
 							</div>
@@ -432,6 +513,37 @@
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent class="w-auto p-0">
+					<div class="flex gap-2 p-2">
+						<Select
+							bind:selected={selectedDateDiagosedMonth}
+							onSelectedChange={(v) => handleSelectedDateDiagosedMonthChange(v)}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="Select month" />
+							</SelectTrigger>
+							<SelectContent>
+								{#each monthOptions as month}
+									<SelectItem value={month.value}>{month.label}</SelectItem>
+								{/each}
+							</SelectContent>
+							<SelectInput name="date_of_birth" />
+						</Select>
+
+						<Select
+							bind:selected={selectedDateDiagosedYear}
+							onSelectedChange={(v) => handleSelectedDateDiagosedYearChange(v)}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="Select year" />
+							</SelectTrigger>
+							<SelectContent class="max-h-[200px] overflow-y-auto">
+								{#each yearOptions as year}
+									<SelectItem value={year.value}>{year.label}</SelectItem>
+								{/each}
+							</SelectContent>
+							<SelectInput name="date_of_birth" />
+						</Select>
+					</div>
 					<Calendar bind:value={selectedDateDiagosed} />
 				</PopoverContent>
 			</Popover>
@@ -459,6 +571,37 @@
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent class="w-auto p-0">
+					<div class="flex gap-2 p-2">
+						<Select
+							bind:selected={selectedDateReportedMonth}
+							onSelectedChange={(v) => handleSelectedDateReportedMonthChange(v)}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="Select month" />
+							</SelectTrigger>
+							<SelectContent>
+								{#each monthOptions as month}
+									<SelectItem value={month.value}>{month.label}</SelectItem>
+								{/each}
+							</SelectContent>
+							<SelectInput name="date_of_birth" />
+						</Select>
+
+						<Select
+							bind:selected={selectedDateReportedYear}
+							onSelectedChange={(v) => handleSelectedDateReportedYearChange(v)}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="Select year" />
+							</SelectTrigger>
+							<SelectContent class="max-h-[200px] overflow-y-auto">
+								{#each yearOptions as year}
+									<SelectItem value={year.value}>{year.label}</SelectItem>
+								{/each}
+							</SelectContent>
+							<SelectInput name="date_of_birth" />
+						</Select>
+					</div>
 					<Calendar bind:value={selectedDateReported} />
 				</PopoverContent>
 			</Popover>

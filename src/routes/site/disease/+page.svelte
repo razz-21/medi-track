@@ -5,6 +5,7 @@
 	import { DiseaseTypeEnum } from '$lib/models/disease/disease.type';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+	import { onDestroy } from 'svelte';
 
 	type Props = {
 		data: {
@@ -17,13 +18,18 @@
 	let { data }: Props = $props();
 
 	let stats = $derived(data.stats);
+	let toastId = $state<string | number | undefined>(undefined);
 
 	beforeNavigate(() => {
-		toast.info('Redirecting to site. Please wait...');
+		toastId = toast.info('Redirecting to site. Please wait...');
 	});
 
 	afterNavigate(() => {
-		toast.dismiss();
+		toast.dismiss(toastId);
+	});
+
+	onDestroy(() => {
+		toast.dismiss(toastId);
 	});
 
 	function handleExplore() {

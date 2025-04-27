@@ -84,8 +84,8 @@
 
 	let maleAvatar = 'https://avatar.iran.liara.run/public/21';
 	let femaleAvatar = 'https://avatar.iran.liara.run/public/67';
-	let getAvatar = $derived(() =>
-		selectedPatient?.gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
+	let getAvatar = $derived((gender: GenderEnum) =>
+		gender === GenderEnum.MALE ? maleAvatar : femaleAvatar
 	);
 
 	let isFormInvalid = $derived(() => {
@@ -195,7 +195,7 @@
 											<div class="flex items-center gap-2">
 												<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
 													<img
-														src={getAvatar()}
+														src={getAvatar(patient.gender)}
 														alt="Patient avatar"
 														class="w-full h-full object-cover"
 													/>
@@ -223,7 +223,7 @@
 								<div class="flex gap-2">
 									<div class="w-6 h-6 rounded-full border border-gray-300 overflow-hidden">
 										<img
-											src={getAvatar()}
+											src={getAvatar(selectedPatient.gender)}
 											alt="Patient avatar"
 											class="w-full h-full object-cover"
 										/>

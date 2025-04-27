@@ -50,6 +50,17 @@
 				>
 					Vaccine site
 				</div>
+				<div
+					role="button"
+					tabindex="0"
+					class="p-2 rounded-xl text-xs font-medium cursor-pointer {activeRoute === Routes.Login
+						? 'bg-green-300 '
+						: ''}"
+					onclick={() => handleGoto(Routes.Login)}
+					onkeydown={(event) => handleKeyDown(event, Routes.Login)}
+				>
+					App
+				</div>
 			</div>
 		</div>
 	</div>

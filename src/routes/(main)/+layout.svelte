@@ -6,7 +6,8 @@
 	import { patientsStore } from '$lib/store/patients.store';
 	import { isAuthenticated } from '$lib/utils/auth.util';
 	import { Routes } from '$lib/models/navigation/routes';
-	import { goto } from '$app/navigation';
+	import { goto, preloadCode } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	let {
 		children,
@@ -15,6 +16,15 @@
 
 	if (data.user) {
 		$userStore = data.user;
+	}
+
+	if (browser) {
+		preloadCode(Routes.Dashboard);
+		preloadCode(Routes.VaccineReports);
+		preloadCode(Routes.DiseaseReports);
+		preloadCode(Routes.Patients);
+		preloadCode(Routes.Users);
+		preloadCode(Routes.Profile);
 	}
 
 	onMount(async () => {
