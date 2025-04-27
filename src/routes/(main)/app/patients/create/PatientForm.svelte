@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { z, ZodError } from 'zod';
+	import { z } from 'zod';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import {
@@ -19,6 +19,7 @@
 	import { GenderEnum, type Gender } from '$lib/models/common/common.types';
 	import { onMount } from 'svelte';
 	import { transformDotNotationObject } from '$lib/utils/common.util';
+	import type { Selected } from 'bits-ui';
 
 	export const PatientFormSchema = z.object({
 		firstname: z.string({ required_error: 'First name is required' }).nonempty({
@@ -97,8 +98,46 @@
 	});
 	let dateOfBirthValue = $state(parseDate(formatDate(new Date().toISOString())));
 
+	const monthOptions = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	].map((month, i) => ({ value: i + 1, label: month }));
+
+	const monthFmt = new DateFormatter('en-US', {
+		month: 'long'
+	});
+
+	const yearFmt = new DateFormatter('en-US', {
+		year: 'numeric'
+	});
+
+	const yearOptions = Array.from({ length: 100 }, (_, i) => ({
+		label: yearFmt.format(new Date(new Date().getFullYear() - i, 0, 1)),
+		value: new Date().getFullYear() - i
+	}));
+
 	const df = new DateFormatter('en-US', {
 		dateStyle: 'long'
+	});
+
+	let selectedMonth = $derived({
+		label: monthFmt.format(dateOfBirthValue.toDate(getLocalTimeZone())),
+		value: dateOfBirthValue.month
+	});
+
+	let selectedYear = $derived({
+		label: yearFmt.format(dateOfBirthValue.toDate(getLocalTimeZone())),
+		value: dateOfBirthValue.year
 	});
 
 	onMount(() => {
@@ -151,6 +190,20 @@
 		} else {
 			formErrors = {};
 		}
+	}
+
+	function handleSelectedMonthChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(selectedYear.value, v.value - 1, 1, 12, 0, 0));
+		dateOfBirthValue = parseDate(formatDate(newDate.toISOString()));
+		handleBlur('date_of_birth');
+	}
+
+	function handleSelectedYearChange(v: Selected<number> | undefined) {
+		if (!v) return;
+		const newDate = new Date(Date.UTC(v.value, selectedMonth.value - 1, 1, 12, 0, 0));
+		dateOfBirthValue = parseDate(formatDate(newDate.toISOString()));
+		handleBlur('date_of_birth');
 	}
 
 	function formatDate(dateString: string): string {
@@ -262,6 +315,37 @@
 							</Button>
 						</Popover.Trigger>
 						<Popover.Content class="w-auto p-0" align="start">
+							<div class="flex gap-2 p-2">
+								<Select
+									bind:selected={selectedMonth}
+									onSelectedChange={(v) => handleSelectedMonthChange(v)}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="Select month" />
+									</SelectTrigger>
+									<SelectContent>
+										{#each monthOptions as month}
+											<SelectItem value={month.value}>{month.label}</SelectItem>
+										{/each}
+									</SelectContent>
+									<SelectInput name="date_of_birth" />
+								</Select>
+
+								<Select
+									bind:selected={selectedYear}
+									onSelectedChange={(v) => handleSelectedYearChange(v)}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="Select year" />
+									</SelectTrigger>
+									<SelectContent class="max-h-[200px] overflow-y-auto">
+										{#each yearOptions as year}
+											<SelectItem value={year.value}>{year.label}</SelectItem>
+										{/each}
+									</SelectContent>
+									<SelectInput name="date_of_birth" />
+								</Select>
+							</div>
 							<Calendar
 								type="single"
 								bind:value={dateOfBirthValue}

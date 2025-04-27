@@ -26,7 +26,7 @@
 	let diseaseTypes = $derived(Object.values(DiseaseTypeEnum));
 	let diseaseTypesColor = $state({
 		[DiseaseTypeEnum.Dengue]: 'rgb(56, 189, 248)',
-		[DiseaseTypeEnum.Flu]: 'rgb(74, 222, 128)',
+		[DiseaseTypeEnum.Covid19]: 'rgb(74, 222, 128)',
 		[DiseaseTypeEnum.HIV]: 'rgb(251, 191, 36)',
 		[DiseaseTypeEnum.Influenza]: 'rgb(248, 113, 113)',
 		[DiseaseTypeEnum.TB]: 'rgb(167, 139, 250)'

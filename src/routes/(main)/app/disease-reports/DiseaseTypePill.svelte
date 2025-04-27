@@ -12,7 +12,7 @@
 		switch (diseaseType) {
 			case DiseaseTypeEnum.Dengue:
 				return 'border-sky-300 text-sky-700';
-			case DiseaseTypeEnum.Flu:
+			case DiseaseTypeEnum.Covid19:
 				return 'border-green-300 text-green-700';
 			case DiseaseTypeEnum.HIV:
 				return 'border-amber-300 text-amber-700';
