@@ -24,6 +24,7 @@
 	import { debounce } from '$lib/utils/common.util';
 	import { toast } from 'svelte-sonner';
 	import { patchUserHandler } from '$lib/handler/users/patch-user.handler';
+	import { isUserAdmin } from '$lib/store/user.store';
 </script>
 
 <script lang="ts">
@@ -36,6 +37,10 @@
 	let count = $derived(usersTable.count ?? 0);
 	let loadingTable = $state(true);
 	let filterRoleInitialSelected = { label: 'All', value: '' };
+
+	if (!isUserAdmin()) {
+		goto(Routes.Dashboard);
+	}
 
 	onMount(async () => {
 		fetchUsers();
