@@ -14,7 +14,7 @@ const config = {
 		adapter: adapter()
 	},
 	hooks: {
-		server: "./src/hooks.server.ts"
+		server: './src/hooks.server.ts'
 	}
 };
 
