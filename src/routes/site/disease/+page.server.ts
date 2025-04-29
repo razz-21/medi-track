@@ -92,7 +92,7 @@ export const load: PageServerLoad = async () => {
 		};
 	} catch (e) {
 		return error(500, {
-			message: 'Failed to get disease site stats'
+			message: 'Failed to get disease site'
 		});
 	}
 };

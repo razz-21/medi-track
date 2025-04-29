@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import { logoutUserHandler } from '$lib/handler/login/logout-user.handler';
 	import { userStore } from '$lib/store/user.store';
+	import { isUserAdmin } from '$lib/store/user.store';
 
 	let user = $userStore;
 	let userFirstNameLetter = $derived(user?.firstname?.[0]);
@@ -76,17 +77,19 @@
 			<span>Disease Reports</span>
 		</div>
 
-		<div
-			role="button"
-			tabindex="0"
-			class="sidebar-navigation-item"
-			class:active={activeRoute.includes(Routes.Users)}
-			onclick={() => navigate(Routes.Users)}
-			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Users)}
-		>
-			<Users class="w-4 h-4" />
-			<span>Users</span>
-		</div>
+		{#if isUserAdmin()}
+			<div
+				role="button"
+				tabindex="0"
+				class="sidebar-navigation-item"
+				class:active={activeRoute.includes(Routes.Users)}
+				onclick={() => navigate(Routes.Users)}
+				onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Users)}
+			>
+				<Users class="w-4 h-4" />
+				<span>Users</span>
+			</div>
+		{/if}
 	</div>
 
 	<div class="sidebar-footer">

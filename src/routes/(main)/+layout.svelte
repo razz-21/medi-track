@@ -38,3 +38,10 @@
 </script>
 
 {@render children()}
+
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2">
+	<button class="border border-gray-300 rounded-md bg-white text-xs px-4 py-2 max-w-md text-left">
+		The data in this system is for educational purposes only. Records are not idealy representative
+		of real records.
+	</button>
+</div>
