@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { UUIDSchema } from '../common/common.schema';
-import { PatientStatusEnum } from './patient.type';
+import { PatientStatusEnum, PatientHouseholdRelationshipEnum } from './patient.type';
 import { GenderEnum } from '../common/common.types';
 
 export const PatientRelevantInformationSchema = z.object({
@@ -14,6 +14,7 @@ export const PatientRelevantInformationSchema = z.object({
 
 export const PatientStatusSchema = z.nativeEnum(PatientStatusEnum);
 export const PatientGenderSchema = z.nativeEnum(GenderEnum);
+export const PatientHouseholdRelationshipSchema = z.nativeEnum(PatientHouseholdRelationshipEnum);
 
 export const PatientSchema = z.object({
 	_id: UUIDSchema,
@@ -24,6 +25,8 @@ export const PatientSchema = z.object({
 	date_of_birth: z.string(),
 	contact_number: z.string().nullable().default(null),
 	address: z.string(),
+	hsn: z.string().nullable().default(null),
+	household_relationship: z.string().nullable().default(null),
 	weight: z.number().nullable().default(null),
 	height: z.number().nullable().default(null),
 	blood_type: z.string().nullable().default(null),
@@ -47,7 +50,11 @@ export const PatientGetTableSchema = z
 	})
 	.extend(PatientGetTableParamsSchema.shape);
 
-export const PatientGetSchema = PatientSchema;
+export const PatientFamilyMemberSchema = PatientSchema.omit({ relevant_information: true });
+
+export const PatientGetSchema = PatientSchema.extend({
+	family_members: z.array(PatientFamilyMemberSchema)
+});
 
 export const PatientPostSchema = PatientSchema.omit({
 	_id: true,
