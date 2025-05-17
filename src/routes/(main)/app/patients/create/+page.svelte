@@ -38,8 +38,8 @@
 <div class="max-w-[900px]">
 	<div class="flex items-center justify-between mt-4 mb-6">
 		<div>
-			<h2 class="text-2xl font-bold">Create Patient</h2>
-			<p class="text-xs text-gray-400">Create a new patient record</p>
+			<h2 class="text-2xl font-bold">Create Resident</h2>
+			<p class="text-xs text-gray-400">Create a new resident record</p>
 		</div>
 	</div>
 

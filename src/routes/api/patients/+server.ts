@@ -56,6 +56,7 @@ export const GET: RequestHandler = async ({ url }) => {
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { patient } = await request.json();
+		console.log(patient);
 		PatientPostSchema.parse(patient);
 
 		const patientData = {
@@ -77,6 +78,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			status: 201
 		});
 	} catch (error) {
+		console.error(error);
 		if (error instanceof z.ZodError) {
 			const errors = error.errors.map((err) => ({
 				field: err.path.join('.'),
