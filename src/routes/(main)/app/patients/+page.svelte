@@ -65,15 +65,15 @@
 	<div class="flex items-center justify-between mt-4 mb-6">
 		<div>
 			<h2 class="text-2xl font-bold">
-				Patients <span class="text-sm text-gray-400">({count})</span>
+				Residents <span class="text-sm text-gray-400">({count})</span>
 			</h2>
-			<p class="text-xs text-gray-400">List of all patients records</p>
+			<p class="text-xs text-gray-400">List of all residents records</p>
 		</div>
 
 		<div class="flex items-center gap-2">
 			<Button size="sm" on:click={handleCreatePatient}>
 				<Plus class="w-4 h-4" />
-				Add Patient
+				Add Resident
 			</Button>
 		</div>
 	</div>

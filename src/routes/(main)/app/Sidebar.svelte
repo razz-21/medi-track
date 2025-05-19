@@ -50,7 +50,7 @@
 			onkeydown={(e) => e.key === 'Enter' && navigate(Routes.Patients)}
 		>
 			<UserRoundPlus class="w-4 h-4" />
-			<span>Patients</span>
+			<span>Residents</span>
 		</div>
 
 		<div

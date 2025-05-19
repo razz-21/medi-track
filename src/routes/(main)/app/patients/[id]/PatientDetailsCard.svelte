@@ -61,12 +61,14 @@
 
 			<div class="text-center">
 				<h2 class="text-2xl font-medium">{patient.firstname} {patient.lastname}</h2>
-				<div class="text-xs text-gray-500">john.doe@example.com</div>
+				<div class="text-xs text-gray-500">RESIDENT</div>
 			</div>
 
-			<div class="mt-2">
-				<Button variant="outline" size="sm">Upload image</Button>
-			</div>
+			{#if false}
+				<div class="mt-2">
+					<Button variant="outline" size="sm">Upload image</Button>
+				</div>
+			{/if}
 		</div>
 
 		<div class="w-2/3 mx-6 py-4 flex-wrap">
@@ -92,10 +94,24 @@
 					</div>
 				</div>
 
-				<div class="col-span-2 flex flex-col">
+				<div class="flex flex-col">
 					<div class="flex flex-col gap-1">
 						<h3 class="text-xs text-gray-400">Address</h3>
 						<p class="text-xs font-medium">{patient.address}</p>
+					</div>
+				</div>
+
+				<div class="flex flex-col">
+					<div class="flex flex-col gap-1">
+						<h3 class="text-xs text-gray-400">HSN (Household serial number)</h3>
+						<p class="text-xs font-medium">{patient.hsn ?? '-'}</p>
+					</div>
+				</div>
+
+				<div class="flex flex-col">
+					<div class="flex flex-col gap-1">
+						<h3 class="text-xs text-gray-400">Household relationship</h3>
+						<p class="text-xs font-medium">{patient.household_relationship ?? '-'}</p>
 					</div>
 				</div>
 

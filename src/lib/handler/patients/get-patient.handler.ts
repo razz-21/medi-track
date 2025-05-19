@@ -1,9 +1,9 @@
 import { goto } from '$app/navigation';
 import { Routes } from '$lib/models/navigation/routes.js';
-import type { PatientGet } from '$lib/models/patients/patient.type';
+import type { PatientGetWithHistory } from '$lib/models/patients/patient.type';
 import { requestFetch } from '$lib/utils/fetch.utils.js';
 import { toast } from 'svelte-sonner';
-export async function getPatient(id: string): Promise<PatientGet> {
+export async function getPatient(id: string): Promise<PatientGetWithHistory> {
 	const response = await requestFetch(`${Routes.PatientsApi}/${id}`);
 
 	if (!response.ok) {
