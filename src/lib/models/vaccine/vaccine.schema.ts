@@ -130,6 +130,23 @@ export const VaccineSiteSchema = z.object({
 	})
 });
 
+export const VaccineAnalysisSchema = z.object({
+	[VaccineTypeEnum.BCG]: PatientSchema.omit({ relevant_information: true }).array(),
+	[VaccineTypeEnum.HepaB1]: PatientSchema.omit({ relevant_information: true }).array(),
+	[VaccineTypeEnum.Polio]: PatientSchema.omit({ relevant_information: true }).array(),
+	[VaccineTypeEnum.PCV]: PatientSchema.omit({ relevant_information: true }).array(),
+	[VaccineTypeEnum.MMR]: PatientSchema.omit({ relevant_information: true }).array(),
+	[VaccineTypeEnum.Covid19]: PatientSchema.omit({ relevant_information: true }).array(),
+	stats: z.object({
+		total_bcg_unvaccinated: z.number(),
+		total_hepa_b1_unvaccinated: z.number(),
+		total_polio_unvaccinated: z.number(),
+		total_pcv_unvaccinated: z.number(),
+		total_mmr_unvaccinated: z.number(),
+		total_covid19_unvaccinated: z.number()
+	})
+});
+
 export type VaccineReport = z.infer<typeof VaccineReportSchema>;
 export type VaccineBaseDetails = z.infer<typeof VaccineBaseDetailsSchema>;
 export type VaccineBaseDetailsArray = z.infer<typeof VaccineBaseDetailsArraySchema>;
@@ -141,3 +158,4 @@ export type VaccineReportPost = z.infer<typeof VaccineReportPostSchema>;
 export type VaccineReportGet = z.infer<typeof VaccineReportGetSchema>;
 export type VaccineReportPatch = z.infer<typeof VaccineReportPatchSchema>;
 export type VaccineSite = z.infer<typeof VaccineSiteSchema>;
+export type VaccineAnalysis = z.infer<typeof VaccineAnalysisSchema>;

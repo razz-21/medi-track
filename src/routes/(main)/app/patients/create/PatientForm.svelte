@@ -20,7 +20,7 @@
 	import { onMount } from 'svelte';
 	import { transformDotNotationObject } from '$lib/utils/common.util';
 	import type { Selected } from 'bits-ui';
-
+	import { PatientHouseholdRelationshipEnum } from '$lib/models/patients/patient.type';
 	export const PatientFormSchema = z.object({
 		firstname: z.string({ required_error: 'First name is required' }).nonempty({
 			message: 'First name is required'
@@ -40,6 +40,14 @@
 		address: z.string({ required_error: 'Address is required' }).nonempty({
 			message: 'Address is required'
 		}),
+		hsn: z.string({ required_error: 'Household number is required' }).nonempty({
+			message: 'Household number is required'
+		}),
+		household_relationship: z
+			.nativeEnum(PatientHouseholdRelationshipEnum, {
+				required_error: 'Household relationship is required'
+			})
+			.nullable(),
 		weight: z.number().nullable(),
 		height: z.number().nullable(),
 		blood_type: z.string().nullable(),
@@ -92,6 +100,20 @@
 		label: 'Male',
 		value: GenderEnum.MALE
 	});
+	let householdRelationshipInitialSelected = $state<{
+		label: string;
+		value: PatientHouseholdRelationshipEnum;
+	}>({
+		label: 'Father',
+		value: PatientHouseholdRelationshipEnum.FATHER
+	});
+	let householdRelationshipOptions = $derived(
+		Object.values(PatientHouseholdRelationshipEnum).map((relationship) => ({
+			label: relationship.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
+			value: relationship
+		}))
+	);
+
 	let bloodTypeInitialSelected = $state<{ label: string; value: string }>({
 		label: 'A+',
 		value: 'A+'
@@ -155,6 +177,9 @@
 				: dateOfBirthValue;
 			formEl.contact_number.value = patientData?.contact_number ?? '+63';
 			formEl.address.value = patientData?.address ?? '';
+			formEl.hsn.value = patientData?.hsn ?? '';
+			formEl.household_relationship.value =
+				patientData?.household_relationship ?? householdRelationshipInitialSelected.value ?? '';
 			formEl.weight.value = patientData?.weight ?? '';
 			formEl.height.value = patientData?.height ?? '';
 			formEl.blood_type.value = patientData?.blood_type ?? '';
@@ -184,12 +209,16 @@
 			height: data.height ? Number(data.height) : null
 		};
 
+		console.log(patientData);
+
 		const result = PatientFormSchema.safeParse(patientData);
 		if (!result.success) {
 			formErrors = result.error.flatten().fieldErrors;
 		} else {
 			formErrors = {};
 		}
+
+		console.log(formErrors);
 	}
 
 	function handleSelectedMonthChange(v: Selected<number> | undefined) {
@@ -391,6 +420,41 @@
 					{#if touched.address && formErrors.address}
 						<p class="text-xs text-red-500">{formErrors.address?.[0]}</p>
 					{/if}
+				</div>
+			</div>
+
+			<div class="flex gap-4">
+				<div class="w-1/2 flex flex-col gap-2">
+					<Label class="text-xs"
+						>HSN (Household serial number) <span class="text-red-500">*</span></Label
+					>
+					<Input
+						name="hsn"
+						onblur={() => handleBlur('hsn')}
+						class={{
+							'border-red-500 focus-visible:ring-red-500': touched.hsn && formErrors.hsn
+						}}
+					/>
+					{#if touched.hsn && formErrors.hsn}
+						<p class="text-xs text-red-500">{formErrors.hsn?.[0]}</p>
+					{/if}
+				</div>
+
+				<div class="w-1/2 flex flex-col gap-2">
+					<Label class="text-xs">Household relationship <span class="text-red-500">*</span></Label>
+					<Select selected={householdRelationshipInitialSelected}>
+						<SelectTrigger>
+							<SelectValue placeholder="Select household relationship" />
+						</SelectTrigger>
+						<SelectContent>
+							{#each householdRelationshipOptions as relationship}
+								<SelectItem value={relationship.value}
+									><span class="capitalize">{relationship.label}</span></SelectItem
+								>
+							{/each}
+						</SelectContent>
+						<SelectInput name="household_relationship" />
+					</Select>
 				</div>
 			</div>
 

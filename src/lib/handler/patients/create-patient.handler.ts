@@ -9,7 +9,8 @@ export async function createPatienthandler(patientData: PatientPost) {
 	});
 
 	if (!response.ok) {
-		throw new Error('Failed to create patient');
+		const error = await response.json();
+		throw new Error(error.message);
 	}
 
 	return response.json();
